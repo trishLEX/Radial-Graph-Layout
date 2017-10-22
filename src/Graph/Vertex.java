@@ -2,7 +2,11 @@ package Graph;
 
 import java.util.ArrayList;
 
+/* x и y - координаты центра вершины */
 public class Vertex {
+    static final double VERTEX_WIDTH = 0.02;
+    static final double VERTEX_HEIGHT = 0.02;
+
     private ArrayList<Vertex> child;
     private Vertex parent;
     protected double x, y;
@@ -13,6 +17,7 @@ public class Vertex {
     //private double r;
     //private double angle;
     private double width, height;
+    private Sign sign;
 
     Vertex(int i) {
         this.child = new ArrayList<>();
@@ -27,7 +32,10 @@ public class Vertex {
         //this.r = 0;
         //this.angle = 0;
 
-        this.width = this.height = 0.02;
+        this.width = VERTEX_WIDTH;
+        this.height = VERTEX_HEIGHT;
+
+        this.sign = new Sign(x, y - height / 2);
     }
 
     protected Vertex() {
@@ -41,6 +49,8 @@ public class Vertex {
         this.isRoot = false;
 
         this.width = this.height = 0.02;
+
+        this.sign = new Sign(x, y - height / 2);
     }
 
     public ArrayList<Vertex> getChild() {
@@ -65,6 +75,7 @@ public class Vertex {
 
     public void setX(double x) {
         this.x = x;
+        this.sign.setX(x);
     }
 
     public double getY() {
@@ -73,6 +84,7 @@ public class Vertex {
 
     public void setY(double y) {
         this.y = y;
+        this.sign.setY(y - VERTEX_HEIGHT / 2);
     }
 
     public int getMark() {
@@ -137,6 +149,14 @@ public class Vertex {
 
     public void setHeight(double height) {
         this.height = height;
+    }
+
+    public Sign getSign() {
+        return this.sign;
+    }
+
+    public void setSign(Sign sign) {
+        this.sign = sign;
     }
 
     @Override

@@ -15,9 +15,11 @@ import static org.lwjgl.opengl.GL11.glEnable;
 
 class Drawer {
     private static final int NUMBER_OF_SIDES = 50;
-    private static final double[] GRAY = {0.8, 0.8, 0.8};
-    private static final double[] RED = {1.0, 0.0, 0.0};
+
+    private static final double[] GRAY  = {0.8, 0.8, 0.8};
+    private static final double[] RED   = {1.0, 0.0, 0.0};
     private static final double[] BLACK = {0.0, 0.0, 0.0};
+    private static final double[] WHITE = {1.0, 1.0, 1.0};
 
     private static final String NAME = "Radial Graph";
     private static final int WIDTH = GraphVisualization.WIDTH;
@@ -62,12 +64,17 @@ class Drawer {
         glVertex2d(x + width / 2, y - height / 2);
     }
 
-    private void drawVertex(double x, double y, double width, double height) {
+    private void drawVertex(Vertex v) {
         glLineWidth(1);
+
+        double x = v.getX();
+        double y = v.getY();
+        double width = v.getWidth();
+        double height = v.getHeight();
+
         glBegin(GL_LINE_LOOP);
         {
             glColor3dv(BLACK);
-
             drawQuads(x, y, width, height);
         }
         glEnd();
@@ -79,6 +86,25 @@ class Drawer {
         }
         glEnd();
 
+        Sign sign = v.getSign();
+        double sx = sign.getX();
+        double sy = sign.getY();
+        double sWidth = sign.getWidth();
+        double sHeight = sign.getHeight();
+
+        glBegin(GL_LINE_LOOP);
+        {
+            glColor3dv(BLACK);
+            drawQuads(sx, sy, sWidth, sHeight);
+        }
+        glEnd();
+
+        glBegin(GL_QUADS);
+        {
+            glColor3dv(WHITE);
+            drawQuads(sx, sy, sWidth, sHeight);
+        }
+        glEnd();
     }
 
     private void drawLine(Vertex v1, Vertex v2) {
@@ -96,9 +122,9 @@ class Drawer {
         int i = 0;
         for (Vertex v: graph.getVertices()) {
             for (Vertex u: v.getChild()) {
-                drawVertex(u.getX(), u.getY(), u.getWidth(), u.getHeight());
+                drawVertex(u);
             }
-            drawVertex(v.getX(), v.getY(), v.getWidth(), v.getHeight());
+            drawVertex(v);
 
             for (Vertex u: v.getChild()) {
                 drawLine(v, u);
