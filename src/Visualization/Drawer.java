@@ -15,8 +15,6 @@ import static org.lwjgl.opengl.GL11.glEnable;
 
 class Drawer {
     private static final int NUMBER_OF_SIDES = 50;
-    //private static final int WIDTH = 640;
-    //private static final int HEIGHT = 640;
     private static final double[] GRAY = {0.8, 0.8, 0.8};
     private static final double[] RED = {1.0, 0.0, 0.0};
     private static final double[] BLACK = {0.0, 0.0, 0.0};
@@ -30,7 +28,6 @@ class Drawer {
     private Graph graph;
 
     private int type;
-    //private int width;
 
     private void background() {
         glClearColor(1, 1, 1, 0);
@@ -41,7 +38,6 @@ class Drawer {
     Drawer(Graph graph, int type) {
         this.graph = graph;
         this.type = type;
-        //this.width = width;
 
         GLFWErrorCallback.createPrint(System.err).set();
 
@@ -79,12 +75,6 @@ class Drawer {
         glBegin(GL_QUADS);
         {
             glColor3dv(RED);
-//            for (int i = 0; i <= NUMBER_OF_SIDES; i++) {
-//                glVertex2d(
-//                        (x + r * cos(i * PI * 2 / NUMBER_OF_SIDES)),
-//                        (y + r * sin(i * PI * 2 / NUMBER_OF_SIDES))
-//                );
-//            }
             drawQuads(x, y, width, height);
         }
         glEnd();
@@ -105,7 +95,6 @@ class Drawer {
     private void drawGraph(Graph graph) {
         int i = 0;
         for (Vertex v: graph.getVertices()) {
-            //glLineWidth(2);
             for (Vertex u: v.getChild()) {
                 drawVertex(u.getX(), u.getY(), u.getWidth(), u.getHeight());
             }

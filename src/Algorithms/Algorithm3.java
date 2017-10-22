@@ -12,14 +12,6 @@ class Algorithm3 {
         private ArrayList<polarVertex> child;
         private polarVertex parent;
 
-//        polarVertex(int i) {
-//            super(i);
-//            this.r = 0.0;
-//            this.angle = 0.0;
-//            this.parent = null;
-//            this.child = new ArrayList<>();
-//        }
-
         polarVertex(Vertex v) {
             this.index = v.getIndex();
             this.depth = v.getDepth();
@@ -99,7 +91,6 @@ class Algorithm3 {
 
         for (polarVertex u: parent.getChilds()) {
             if (u != v) {
-                //delta = v.getAngle() - u.getAngle();
                 delta = makeInFirstQuarter(v.getAngle() - u.getAngle());
                 System.out.println("SIBLINGing v = " + v.getIndex() + " u = " + u.getIndex() + " delta = " + delta);
 
@@ -207,8 +198,7 @@ class Algorithm3 {
                     double phi = v.getParent().getAngle() - Math.asin(v.getR() * Math.sin(v.getAngle()) / cosinesLaw(v.getR(), v.getParent().getR(), v.getAngle()));
 
                     System.out.println("new coords v = " + v.getIndex() + " (" + r + ", " + phi + ")" + " r = " + v.getR() + " angle = " + v.getAngle());
-                    //v.setX(v.getParent().getX() + v.getVertexR() * Math.cos(Math.PI - v.getAngle() + v.getParent().getAngle()));
-                    //v.setY(v.getParent().getY() + v.getVertexR() * Math.sin(Math.PI - v.getAngle() + v.getParent().getAngle()));
+
                     v.setX(r * Math.cos(phi));
                     v.setY(r * Math.sin(phi));
                     v.setAngle(phi);
