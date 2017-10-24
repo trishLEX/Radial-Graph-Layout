@@ -7,28 +7,16 @@ import java.util.ArrayList;
 import java.util.Comparator;
 
 class Algorithm5 {
-    private static int maxDepth = 0;
+    static int maxDepth = 0;
+
     private static double R;
     private static final int WIDTH = GraphVisualization.WIDTH;
     private static final int HEIGHT = GraphVisualization.HEIGHT;
     private static final double RADIAL_COEFFICIENT = 0.7;
 
-    static void useAlgorithm(Graph tree) {
-        Vertex root = findRoot(tree);
-
-        calculateDepth(root, 0);
-
-        System.out.println(tree);
-
-        addRadials(tree);
-
-        radialPositions(tree, root, 0, 2 * Math.PI);
-
-        deleteIntersections(tree);
-    }
-
     private static void deleteIntersections(Graph tree) {
         ArrayList<ArrayList<Vertex>> verticesByDepth = new ArrayList<ArrayList<Vertex>>();
+
         for (int i = 0; i <= maxDepth; i++)
             verticesByDepth.add(new ArrayList<>());
 
@@ -53,6 +41,7 @@ class Algorithm5 {
                     }
                 }
             }
+
             for (Vertex v: currentDepth) {
                 double angleOffset = makeAngleOffsetWithoutIntersections(v, currentDepth);
 
@@ -136,7 +125,7 @@ class Algorithm5 {
         return offset;
     }
 
-    private static final double R_OFFSET = 10.0;
+    static final double R_OFFSET = 10.0;
 
     private static double makeRadialOffsetWithoutIntersections(Vertex v, ArrayList<Vertex> vertices, Graph tree) {
         double offset = 0.0;
@@ -144,6 +133,8 @@ class Algorithm5 {
         for (Vertex u: vertices) {
 
             if (u != v) {
+
+                System.out.println("INTERSECTION? v = " + v.getIndex() + " u = " + u.getIndex() + " " + isIntersect(v, u));
 
                 while (isIntersect(v, u)) {
                     int i = tree.getRadials().indexOf(v.getR());
@@ -161,17 +152,17 @@ class Algorithm5 {
         return offset;
     }
 
-    private static boolean isIntersect(Vertex v, Vertex u) {
+    static boolean isIntersect(Vertex v, Vertex u) {
         return v.isIn(u);
     }
 
-    private static void addRadials(Graph tree) {
+    private static void addFirstRadii(Graph tree) {
         R = (WIDTH < HEIGHT? WIDTH : HEIGHT)/ maxDepth * RADIAL_COEFFICIENT; //раньше радиус был константный
 
         tree.getRadials().add(R);
     }
 
-    private static Vertex findRoot(Graph tree) {
+    static Vertex findRoot(Graph tree) {
         Vertex root = null;
 
         for (Vertex v: tree.getVertices()) {
@@ -187,7 +178,7 @@ class Algorithm5 {
             return root;
     }
 
-    private static void calculateDepth(Vertex root, int depth) {
+    static void calculateDepth(Vertex root, int depth) {
         for (Vertex v: root.getChild()) {
             v.setDepth(depth + 1);
             if (depth + 1 > maxDepth)
@@ -245,5 +236,19 @@ class Algorithm5 {
 
             theta = mu;
         }
+    }
+
+    static void useAlgorithm(Graph tree) {
+        Vertex root = findRoot(tree);
+
+        calculateDepth(root, 0);
+
+        System.out.println(tree);
+
+        addFirstRadii(tree);
+
+        radialPositions(tree, root, 0, 2 * Math.PI);
+
+        deleteIntersections(tree);
     }
 }

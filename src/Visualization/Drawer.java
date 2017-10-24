@@ -1,5 +1,6 @@
 package Visualization;
 
+import Algorithms.Calculation;
 import Graph.*;
 import org.lwjgl.glfw.GLFW;
 import org.lwjgl.glfw.GLFWErrorCallback;
@@ -22,8 +23,8 @@ class Drawer {
     private static final double[] WHITE = {1.0, 1.0, 1.0};
 
     private static final String NAME = "Radial Graph";
-    private static final int WIDTH = GraphVisualization.WIDTH;
-    private static final int HEIGHT = GraphVisualization.HEIGHT;
+    private static final int WIDTH = Calculation.WIDTH;
+    private static final int HEIGHT = Calculation.HEIGHT;
 
     private long window;
 
@@ -46,6 +47,7 @@ class Drawer {
         if (!glfwInit())
             throw new IllegalStateException("unable to initialize GLFW");
 
+        System.out.println("WINDOW width = " + WIDTH + " height = " + HEIGHT);
         this.window = GLFW.glfwCreateWindow(WIDTH, HEIGHT, NAME, 0, 0);
 
         if (window == 0) {
@@ -120,7 +122,6 @@ class Drawer {
     }
 
     private void drawGraph(Graph graph) {
-        int i = 0;
         for (Vertex v: graph.getVertices()) {
             for (Vertex u: v.getChild()) {
                 drawVertex(u);
@@ -132,10 +133,8 @@ class Drawer {
             }
 
             if (type == 3) {
-                drawCircles(v, i);
+                drawCircles(v);
             }
-
-            i++;
         }
     }
 
@@ -153,9 +152,12 @@ class Drawer {
         }
     }
 
-    private void drawCircles(Vertex v, int k){
+    private void drawCircles(Vertex v){
+        int k = v.getIndex();
+
         glLineWidth(1);
         glColor3dv(GRAY);
+
         glBegin(GL_LINE_LOOP);
         {
             for (int i = 0; i < NUMBER_OF_SIDES; i++) {

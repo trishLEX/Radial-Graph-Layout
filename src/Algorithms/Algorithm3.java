@@ -1,13 +1,14 @@
 package Algorithms;
 
 import Graph.*;
-import Visualization.GraphVisualization;
+
+import java.util.ArrayList;
+
+import static Algorithms.Algorithm5.*;
 
 class Algorithm3 {
     private static final double R = 200;
     private static final double PHI = Math.PI;
-    private static final int WIDTH = GraphVisualization.WIDTH;
-    private static final int HEIGHT = GraphVisualization.HEIGHT;
 
     //TODO можно отсортировать по возрастанию угла и тогда брать проосто по индексу
     private static Vertex findNearestSibling(Vertex v) {
@@ -35,7 +36,7 @@ class Algorithm3 {
         return sibling;
     }
 
-    static double makeInFirstQuarter(double angle) {
+    private static double makeInFirstQuarter(double angle) {
         if (angle <= 0) {
             while (angle <= 0)
                 angle += Math.PI;
@@ -58,18 +59,11 @@ class Algorithm3 {
         return Math.sqrt(a * a + b * b - 2 * a * b * Math.cos(angle));
     }
 
-    static void useAlgorithm(Graph tree) {
-        Vertex root = null;
+    private static void radialPositions(Graph tree, Vertex root) {
+        int currentDepth = root.getDepth();
 
-        for (Vertex v: tree.getVertices()) {
-            if (v.isRoot()) {
-                root = v;
-                break;
-            }
-        }
-
-        if (root == null)
-            throw new RuntimeException("Root is null");
+        if (currentDepth != 0)
+            throw new RuntimeException("Depth of the root is not null");
 
         for (Vertex v: tree.getVertices()) {
             if (v.isRoot()) {
@@ -106,9 +100,11 @@ class Algorithm3 {
                     }
                 }
             }
-            tree.getRadials().add(v.getR() / (WIDTH < HEIGHT? WIDTH : HEIGHT));
+            tree.getRadials().add(v.getR());
         }
+    }
 
+    private static void castToNormCoordinates(Graph tree, Vertex root) {
         for (Vertex v: tree.getVertices()) {
 
             if (v.getParent() == root) {
@@ -122,19 +118,86 @@ class Algorithm3 {
                     double r = cosinesLaw(v.getR(), v.getParent().getR(), v.getAngle());
                     double phi = v.getParent().getAngle() - Math.asin(v.getR() * Math.sin(v.getAngle()) / cosinesLaw(v.getR(), v.getParent().getR(), v.getAngle()));
 
-                    System.out.println("new coords v = " + v.getIndex() + " (" + r + ", " + phi + ")" + " r = " + v.getR() + " angle = " + v.getAngle());
-
-                    v.setX(r * Math.cos(phi));
-                    v.setY(r * Math.sin(phi));
-                    v.setAngle(phi);
-                    v.setR(r);
+                    v.setVertex(r, phi);
                 }
             }
         }
 
+//        for (Vertex v: tree.getVertices()) {
+//            tree.getVertices().get(v.getIndex()).setX(v.getX());
+//            tree.getVertices().get(v.getIndex()).setY(v.getY());
+//        }
+    }
+
+    private static void deleteIntersections(Graph tree) {
+        ArrayList<ArrayList<Vertex>> verticesByDepth = new ArrayList<ArrayList<Vertex>>();
+
+        for (int i = 0; i <= maxDepth; i++)
+            verticesByDepth.add(new ArrayList<>());
+
         for (Vertex v: tree.getVertices()) {
-            tree.getVertices().get(v.getIndex()).setX(v.getX());
-            tree.getVertices().get(v.getIndex()).setY(v.getY());
+            verticesByDepth.get(v.getDepth()).add(v);
         }
+
+        for (int i = 1; i <= maxDepth; i++) {
+            ArrayList<Vertex> currentDepth = verticesByDepth.get(i);
+
+            for (Vertex v: currentDepth) {
+                double offset = makeRadialOffsetWithoutIntersections(v, verticesByDepth.get(i - 1));
+
+                if (offset != 0.0) {
+
+                    for (Vertex u: currentDepth) {
+
+                        if (u != v) {
+                            u.setVertex(u.getR() + offset, u.getAngle());
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    private static double makeRadialOffsetWithoutIntersections(Vertex v, ArrayList<Vertex> vertices) {
+        double offset = 0.0;
+
+        for (Vertex u: vertices) {
+
+            if (u != v) {
+
+                while (isIntersect(v, u)) {
+                    offset += R_OFFSET;
+
+                    v.setVertex(v.getR() + R_OFFSET, v.getAngle());
+                }
+            }
+        }
+
+        return offset;
+    }
+
+    private static void fillRadials(Graph tree, Vertex root) {
+        tree.getRadials().clear();
+
+        for (Vertex v: tree.getVertices()) {
+            if (v.getChild().size() != 0)
+                tree.getRadials().add(v.distTo(v.getChild().get(0)));
+            else
+                tree.getRadials().add(v.distTo(v.getParent()));
+        }
+    }
+
+    static void useAlgorithm(Graph tree) {
+        Vertex root = Algorithm5.findRoot(tree);
+
+        calculateDepth(root, 0);
+
+        radialPositions(tree, root);
+
+        castToNormCoordinates(tree, root);
+
+        deleteIntersections(tree);
+
+        fillRadials(tree, root);
     }
 }

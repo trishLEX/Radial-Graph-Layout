@@ -1,7 +1,7 @@
 package Graph;
 
 public class Sign {
-    static final double SIGN_WIDTH = 8.0 * Vertex.VERTEX_WIDTH;
+    static final double SIGN_WIDTH = 7.0 * Vertex.VERTEX_WIDTH;
     static final double SIGN_HEIGHT = 3.0 * Vertex.VERTEX_HEIGHT;
 
     private double x, y;

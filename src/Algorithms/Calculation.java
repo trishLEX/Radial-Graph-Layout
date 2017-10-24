@@ -10,8 +10,9 @@ public class Calculation {
     private static final int START_INDEX = 0;
 
     private Graph graph;
-    private static final int WIDTH = GraphVisualization.WIDTH;
-    private static final int HEIGHT = GraphVisualization.HEIGHT;
+    private int type;
+    public static int WIDTH = GraphVisualization.WIDTH;
+    public static int HEIGHT = GraphVisualization.HEIGHT;
 
     public Calculation(Graph graph) {
         this.graph = graph;
@@ -46,6 +47,8 @@ public class Calculation {
     }
 
     public Graph calculateGraph(int type) {
+        this.type = type;
+
         if (type == 3) {
             makeTree(graph.get(START_INDEX));
             Algorithm3.useAlgorithm(graph);
@@ -78,6 +81,7 @@ public class Calculation {
         for (Vertex v: graph.getVertices()) {
             double sx = v.getSign().getX();
             double sy = v.getSign().getY();
+
             v.setX(v.getX() / WIDTH);
             v.setY(v.getY() / HEIGHT);
             v.setWidth(v.getWidth() / WIDTH);

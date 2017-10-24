@@ -223,4 +223,8 @@ public class Vertex {
         this.setX(r * Math.cos(angle));
         this.setY(r * Math.sin(angle));
     }
+
+    public double distTo(Vertex v) {
+        return Math.sqrt(Math.pow((this.getX() - v.getX()), 2) + Math.pow((this.getY() - v.getY()), 2));
+    }
 }
