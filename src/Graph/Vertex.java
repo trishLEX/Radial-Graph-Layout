@@ -195,17 +195,7 @@ public class Vertex {
     public boolean isIn(Vertex v) {
         if (v == this)
             return false;
-        //if (index == 3 && v.getIndex() == 4) {
-            //System.out.println("index = 3 points:");
-            //for (Double[] p: this.getPoints())
-            //    System.out.println("(" + p[0] + "," + p[1] + ")");
-            //System.out.println("\n");
-            //System.out.println("index = 4 points:");
-            //for (Double[] p: v.getPoints())
-            //    System.out.println("(" + p[0] + "," + p[1] + ")");
-        //}
-        //boolean res1 = false;
-        //boolean res2 = false;
+
         ArrayList<Double[]> vPoints = v.getPoints();
 
         for (Double[] point: this.getPoints()) {

@@ -92,7 +92,6 @@ class Drawer {
         double sWidth = sign.getWidth();
         double sHeight = sign.getHeight();
 
-        //System.out.println("v = " + v.getIndex() + " sx = " + sx + " sy = " + sy + " swid = " + sWidth + " sheig = " + sHeight);
 
         glBegin(GL_LINE_LOOP);
         {
@@ -143,7 +142,6 @@ class Drawer {
     private void drawCircles() {
         glColor3dv(GRAY);
         for (Double r: graph.getRadials()) {
-            //System.out.println(r);
             glBegin(GL_LINE_LOOP);
             {
                 for (int i = 0; i < NUMBER_OF_SIDES; i++) {
@@ -170,10 +168,8 @@ class Drawer {
 
     private void draw() {
         glPointSize(1);
-        //glLineWidth(2);
 
         drawGraph(this.graph);
-        //System.out.println(this.graph.getRadials());
 
         if (type == 5) {
             glLineWidth(1);
