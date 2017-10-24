@@ -54,7 +54,7 @@ public class Calculation {
         //System.out.println(graph);
         if (type == 5) {
             makeTree(graph.get(START_INDEX));
-            Algorithm5.useAlgorithm(graph);
+             Algorithm5.useAlgorithm(graph);
         }
         //Algorithm3.useAlgorithm(graph);
 
@@ -65,18 +65,37 @@ public class Calculation {
         }
 
         for (Vertex v: graph.getVertices()) {
-            System.out.println("COORDINATES " + v.getIndex() + " " + v.getX() + " " + v.getY());
+            System.out.println("COORDINATES " + v.getIndex() + " (" + v.getX() + "," + v.getY() + ") w = " + v.getWidth() + " h = " + v.getHeight());
+            System.out.println("            " + "sign: (" + v.getSign().getX() + "," + v.getSign().getY() + ") w = " + v.getSign().getWidth() + " h = " + v.getSign().getHeight());
         }
 
         convertCoordinates(graph);
 
         return graph;
     }
+
     private void convertCoordinates(Graph graph) {
         for (Vertex v: graph.getVertices()) {
+            double sx = v.getSign().getX();
+            double sy = v.getSign().getY();
             v.setX(v.getX() / WIDTH);
             v.setY(v.getY() / HEIGHT);
-            System.out.println("CONVERTED COORDINATES " + v.getIndex() + " " + v.getX() + " " + v.getY());
+            v.setWidth(v.getWidth() / WIDTH);
+            v.setHeight(v.getHeight() / HEIGHT);
+
+            //System.out.println("old " + v.getIndex() + " sign y = " + v.getSign().getY() + " height = " + HEIGHT + " y / height = " + (v.getSign().getY() / HEIGHT));
+            v.getSign().setX(sx / WIDTH);
+            v.getSign().setY(sy / HEIGHT);
+            v.getSign().setWidth(v.getSign().getWidth() / WIDTH);
+            v.getSign().setHeight(v.getSign().getHeight() / HEIGHT);
+
+            System.out.println("CONVERTED COORDINATES " + v.getIndex() + " (" + v.getX() + "," + v.getY() + ") w = " + v.getWidth() + " h = " + v.getHeight());
+            System.out.println("            " + "sign: (" + v.getSign().getX() + "," + v.getSign().getY() + ") w = " + v.getSign().getWidth() + " h = " + v.getSign().getHeight());
+        }
+
+        for (int i = 0; i < graph.getRadials().size(); i++) {
+            double r = graph.getRadials().get(i) / (WIDTH < HEIGHT? WIDTH : HEIGHT);
+            graph.getRadials().set(i, r);
         }
     }
 

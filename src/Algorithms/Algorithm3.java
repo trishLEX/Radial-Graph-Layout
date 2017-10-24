@@ -3,93 +3,91 @@ package Algorithms;
 import Graph.*;
 import Visualization.GraphVisualization;
 
-import java.util.ArrayList;
-
 class Algorithm3 {
-    private final static class polarVertex extends Vertex {
-        private double r;
-        private double angle;
-        private ArrayList<polarVertex> child;
-        private polarVertex parent;
-
-        polarVertex(Vertex v) {
-            this.index = v.getIndex();
-            this.depth = v.getDepth();
-            this.x = v.getX();
-            this.y = v.getY();
-            this.mark = v.getMark();
-            this.isRoot = v.isRoot();
-            this.parent = null;
-            this.child = new ArrayList<>();
-        }
-
-        public polarVertex getParent() {
-            return this.parent;
-        }
-
-        void setParent(polarVertex v) {
-            this.parent = v;
-        }
-
-        double getR() {
-            return r;
-        }
-
-        void setR(double r) {
-            this.r = r;
-        }
-
-        double getAngle() {
-            return angle;
-        }
-
-        void setAngle(double angle) {
-            this.angle = angle;
-        }
-
-        ArrayList<polarVertex> getChilds() {
-            return this.child;
-        }
-
-        void addChild(polarVertex v) {
-            this.child.add(v);
-        }
-
-    }
-    private static ArrayList<polarVertex> castToPolarVertices(ArrayList<Vertex> g) {
-        ArrayList<polarVertex> pg = new ArrayList<>();
-        for (Vertex v: g) {
-            pg.add(new polarVertex(v));
-        }
-
-        for (Vertex v: g) {
-            if (v.getParent() != null)
-                pg.get(v.getIndex()).setParent(pg.get(v.getParent().getIndex()));
-        }
-
-        for (Vertex v: g) {
-            for (Vertex ch: v.getChild()) {
-                pg.get(v.getIndex()).addChild(pg.get(ch.getIndex()));
-            }
-        }
-
-        return pg;
-    }
+//    private final static class Vertex extends Vertex {
+//        private double r;
+//        private double angle;
+//        private ArrayList<Vertex> child;
+//        private Vertex parent;
+//
+//        Vertex(Vertex v) {
+//            this.index = v.getIndex();
+//            this.depth = v.getDepth();
+//            this.x = v.getX();
+//            this.y = v.getY();
+//            this.mark = v.getMark();
+//            this.isRoot = v.isRoot();
+//            this.parent = null;
+//            this.child = new ArrayList<>();
+//        }
+//
+//        public Vertex getParent() {
+//            return this.parent;
+//        }
+//
+//        void setParent(Vertex v) {
+//            this.parent = v;
+//        }
+//
+//        double getR() {
+//            return r;
+//        }
+//
+//        void setR(double r) {
+//            this.r = r;
+//        }
+//
+//        double getAngle() {
+//            return angle;
+//        }
+//
+//        void setAngle(double angle) {
+//            this.angle = angle;
+//        }
+//
+//        ArrayList<Vertex> getChilds() {
+//            return this.child;
+//        }
+//
+//        void addChild(Vertex v) {
+//            this.child.add(v);
+//        }
+//
+//    }
+//    private static ArrayList<Vertex> castToPolarVertices(ArrayList<Vertex> g) {
+//        ArrayList<Vertex> pg = new ArrayList<>();
+//        for (Vertex v: g) {
+//            pg.add(new Vertex(v));
+//        }
+//
+//        for (Vertex v: g) {
+//            if (v.getParent() != null)
+//                pg.get(v.getIndex()).setParent(pg.get(v.getParent().getIndex()));
+//        }
+//
+//        for (Vertex v: g) {
+//            for (Vertex ch: v.getChild()) {
+//                pg.get(v.getIndex()).addChild(pg.get(ch.getIndex()));
+//            }
+//        }
+//
+//        return pg;
+//    }
 
     private static final double R = 200;
     private static final double PHI = Math.PI;
     private static final int WIDTH = GraphVisualization.WIDTH;
     private static final int HEIGHT = GraphVisualization.HEIGHT;
 
-    //TODO проверить, что дети располагаются по порядку возрастания угла, тогда достаточно брать одного из ближайших по номеру братьев
-    private static polarVertex findNearestSibling(polarVertex v) {
-        //polarVertex parent = (polarVertex) v.getParent();
-        polarVertex parent = v.getParent();
+    //TODO можно отсортировать по возрастанию угла и тогда брать проосто по индексу
+    private static Vertex findNearestSibling(Vertex v) {
+        //Vertex parent = (Vertex) v.getParent();
+        Vertex parent = v.getParent();
         double minAngle = Math.PI * 2;
         double delta;
-        polarVertex sibling = null;
+        Vertex sibling = null;
 
-        for (polarVertex u: parent.getChilds()) {
+        for (Vertex u: parent.getChild()) {
             if (u != v) {
                 delta = makeInFirstQuarter(v.getAngle() - u.getAngle());
                 System.out.println("SIBLINGing v = " + v.getIndex() + " u = " + u.getIndex() + " delta = " + delta);
@@ -108,7 +106,7 @@ class Algorithm3 {
         return sibling;
     }
 
-    private static double makeInFirstQuarter(double angle) {
+    static double makeInFirstQuarter(double angle) {
         if (angle <= 0) {
             while (angle <= 0)
                 angle += Math.PI;
@@ -131,12 +129,12 @@ class Algorithm3 {
         return Math.sqrt(a * a + b * b - 2 * a * b * Math.cos(angle));
     }
 
-    static void useAlgorithm(Graph graph) {
-        ArrayList<polarVertex> tree = castToPolarVertices(graph.getVertices());
+    static void useAlgorithm(Graph tree) {
+        //ArrayList<Vertex> tree = castToPolarVertices(graph.getVertices());
 
-        polarVertex root = null;
+        Vertex root = null;
 
-        for (polarVertex v: tree) {
+        for (Vertex v: tree.getVertices()) {
             if (v.isRoot()) {
                 root = v;
                 break;
@@ -146,7 +144,7 @@ class Algorithm3 {
         if (root == null)
             throw new RuntimeException("Root is null");
 
-        for (polarVertex v: tree) {
+        for (Vertex v: tree.getVertices()) {
             if (v.isRoot()) {
                 root.setX(0);
                 root.setY(0);
@@ -154,19 +152,19 @@ class Algorithm3 {
             }
             else {
                 if (v.getParent() == root) {
-                    v.setAngle(2 * Math.PI * root.getChilds().indexOf(v) / root.getChilds().size());
+                    v.setAngle(2 * Math.PI * root.getChild().indexOf(v) / root.getChild().size());
                     v.setR(R);
                     System.out.println("v = " + v.getIndex() + " polar coords = (" + v.getAngle() + ", " + v.getR() + ")");
                 }
                 else {
-                    v.setAngle(Math.PI - PHI / 2 + PHI * v.getParent().getChilds().indexOf(v) / v.getParent().getChilds().size() + PHI / (2 * v.getParent().getChilds().size()));
+                    v.setAngle(Math.PI - PHI / 2 + PHI * v.getParent().getChild().indexOf(v) / v.getParent().getChild().size() + PHI / (2 * v.getParent().getChild().size()));
 
-                    if (v.getParent().getParent().getChilds().size() == 1) {
+                    if (v.getParent().getParent().getChild().size() == 1) {
                         v.setR(v.getParent().getR()); //здесь было R / 2
                         System.out.println("v = " + v.getIndex() + " polar coords = (" + v.getAngle() + ", " + v.getR() + ")");
                     }
                     else {
-                        polarVertex sibling = findNearestSibling(v.getParent());
+                        Vertex sibling = findNearestSibling(v.getParent());
 
                         System.out.println("v = " + v.getIndex() + " v.parent = " + v.getParent().getIndex() + " v.parent's sibling = " + sibling.getIndex());
                         System.out.println("deltaOld = " + (v.getParent().getAngle() - sibling.getAngle()));
@@ -183,10 +181,10 @@ class Algorithm3 {
                     //System.out.println("v = " + v.getIndex() + " polar coords = (" + v.getAngle() + ", " + v.getVertexR() + ")");
                 }
             }
-            graph.getRadials().add(v.getR() / (WIDTH < HEIGHT? WIDTH : HEIGHT));
+            tree.getRadials().add(v.getR() / (WIDTH < HEIGHT? WIDTH : HEIGHT));
         }
 
-        for (polarVertex v: tree) {
+        for (Vertex v: tree.getVertices()) {
             if (v.getParent() == root) {
                 v.setX(v.getR() * Math.cos(v.getAngle()));
                 v.setY(v.getR() * Math.sin(v.getAngle()));
@@ -207,9 +205,9 @@ class Algorithm3 {
             }
         }
 
-        for (polarVertex v: tree) {
-            graph.getVertices().get(v.getIndex()).setX(v.getX());
-            graph.getVertices().get(v.getIndex()).setY(v.getY());
+        for (Vertex v: tree.getVertices()) {
+            tree.getVertices().get(v.getIndex()).setX(v.getX());
+            tree.getVertices().get(v.getIndex()).setY(v.getY());
         }
     }
 }

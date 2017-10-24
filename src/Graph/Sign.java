@@ -1,8 +1,8 @@
 package Graph;
 
 public class Sign {
-    private final double SIGN_WIDTH = 7 * Vertex.VERTEX_WIDTH;
-    private final double SIGN_HEIGHT = 3 * Vertex.VERTEX_HEIGHT;
+    static final double SIGN_WIDTH = 8.0 * Vertex.VERTEX_WIDTH;
+    static final double SIGN_HEIGHT = 3.0 * Vertex.VERTEX_HEIGHT;
 
     private double x, y;
     private double width;
@@ -19,14 +19,14 @@ public class Sign {
         this.width = SIGN_WIDTH;
         this.height = SIGN_HEIGHT;
         this.x = x;
-        this.y = y - this.height / 2;
+        this.y = y;
     }
 
     public double getX() {
         return x;
     }
 
-    void setX(double x) {
+    public void setX(double x) {
         this.x = x;
     }
 
@@ -34,8 +34,8 @@ public class Sign {
         return y;
     }
 
-    void setY(double y) {
-        this.y = y - this.height / 2;
+    public void setY(double y) {
+        this.y = y;
     }
 
     public double getWidth() {

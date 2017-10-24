@@ -4,18 +4,18 @@ import java.util.ArrayList;
 
 /* x и y - координаты центра вершины */
 public class Vertex {
-    static final double VERTEX_WIDTH = 0.02;
-    static final double VERTEX_HEIGHT = 0.02;
+    static final double VERTEX_WIDTH = 14.0;
+    static final double VERTEX_HEIGHT = 14.0;
 
     private ArrayList<Vertex> child;
     private Vertex parent;
-    protected double x, y;
-    protected int index;
-    protected int mark;
-    protected boolean isRoot;
-    protected int depth;
-    //private double r;
-    //private double angle;
+    private double x, y;
+    private int index;
+    private int mark;
+    private boolean isRoot;
+    private int depth;
+    private double r;
+    private double angle;
     private double width, height;
     private Sign sign;
 
@@ -29,8 +29,8 @@ public class Vertex {
         this.mark = 0;
         this.isRoot = false;
 
-        //this.r = 0;
-        //this.angle = 0;
+        this.r = 0;
+        this.angle = 0;
 
         this.width = VERTEX_WIDTH;
         this.height = VERTEX_HEIGHT;
@@ -48,9 +48,12 @@ public class Vertex {
         this.mark = 0;
         this.isRoot = false;
 
+        this.r = 0;
+        this.angle = 0;
+
         this.width = this.height = 0.02;
 
-        this.sign = new Sign(x, y - height / 2);
+        this.sign = new Sign(x, y - height / 2 - Sign.SIGN_HEIGHT / 2);
     }
 
     public ArrayList<Vertex> getChild() {
@@ -84,7 +87,7 @@ public class Vertex {
 
     public void setY(double y) {
         this.y = y;
-        this.sign.setY(y - VERTEX_HEIGHT / 2);
+        this.sign.setY(y - VERTEX_HEIGHT / 2 - Sign.SIGN_HEIGHT / 2);
     }
 
     public int getMark() {
@@ -119,21 +122,21 @@ public class Vertex {
         this.depth = depth;
     }
 
-//    public double getR() {
-//        return r;
-//    }
-//
-//    public void setR(double r) {
-//        this.r = r;
-//    }
-//
-//    public double getAngle() {
-//        return angle;
-//    }
-//
-//    public void setAngle(double angle) {
-//        this.angle = angle;
-//    }
+    public double getR() {
+        return r;
+    }
+
+    public void setR(double r) {
+        this.r = r;
+    }
+
+    public double getAngle() {
+        return angle;
+    }
+
+    public void setAngle(double angle) {
+        this.angle = angle;
+    }
 
     public double getWidth() {
         return width;
@@ -159,10 +162,75 @@ public class Vertex {
         this.sign = sign;
     }
 
+    private ArrayList<Double[]> getPoints() {
+        double width2 = this.width / 2;
+        double height2 = this.height / 2;
+        double xs = this.sign.getX();
+        double ys = this.sign.getY();
+        double sWidth2 = this.sign.getWidth() / 2;
+        double sHeight2 = this.sign.getHeight() / 2;
+
+        ArrayList<Double[]> thisPoints = new ArrayList<>();
+
+        thisPoints.add(new Double[]{x + width2, y + height2});
+        thisPoints.add(new Double[]{x - width2, y + height2});
+        thisPoints.add(new Double[]{x - width2, y - height2});
+        thisPoints.add(new Double[]{x + width2, y - height2});
+
+        thisPoints.add(new Double[]{xs - sWidth2, ys + sHeight2});
+        thisPoints.add(new Double[]{xs - sWidth2, ys - sHeight2});
+        thisPoints.add(new Double[]{xs + sWidth2, ys - sHeight2});
+        thisPoints.add(new Double[]{xs + sWidth2, ys + sHeight2});
+
+        return thisPoints;
+    }
+
     @Override
     public String toString() {
         String res = "";
         res += this.index;
         return res;
+    }
+
+    public boolean isIn(Vertex v) {
+        if (v == this)
+            return false;
+        //if (index == 3 && v.getIndex() == 4) {
+            //System.out.println("index = 3 points:");
+            //for (Double[] p: this.getPoints())
+            //    System.out.println("(" + p[0] + "," + p[1] + ")");
+            //System.out.println("\n");
+            //System.out.println("index = 4 points:");
+            //for (Double[] p: v.getPoints())
+            //    System.out.println("(" + p[0] + "," + p[1] + ")");
+        //}
+        //boolean res1 = false;
+        //boolean res2 = false;
+        ArrayList<Double[]> vPoints = v.getPoints();
+
+        for (Double[] point: this.getPoints()) {
+            double px = point[0];
+            double py = point[1];
+            if (px < vPoints.get(0)[0] && px > vPoints.get(1)[0] && py < vPoints.get(0)[1] && py > vPoints.get(3)[1]) {
+                return true;
+            }
+        }
+
+        for (Double[] point: this.getPoints()) {
+            double px = point[0];
+            double py = point[1];
+            if (px < vPoints.get(7)[0] && px > vPoints.get(4)[0] && py < vPoints.get(7)[1] && py > vPoints.get(6)[1]) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    public void setVertex(double r, double angle) {
+        this.r = r;
+        this.angle = angle;
+        this.setX(r * Math.cos(angle));
+        this.setY(r * Math.sin(angle));
     }
 }

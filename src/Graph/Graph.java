@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.Scanner;
 
 public class Graph {
+    private final double VERTEX_R = 0.015;
+
     private ArrayList<Vertex> vertices;
     private double VertexR;
     private ArrayList<Double> radials;
@@ -16,7 +18,7 @@ public class Graph {
             vertices.add(new Vertex(i));
         }
 
-        this.VertexR = 0.015;
+        this.VertexR = VERTEX_R;
 
         this.radials = new ArrayList<>();
 

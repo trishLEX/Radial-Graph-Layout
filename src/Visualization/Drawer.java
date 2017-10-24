@@ -92,6 +92,8 @@ class Drawer {
         double sWidth = sign.getWidth();
         double sHeight = sign.getHeight();
 
+        //System.out.println("v = " + v.getIndex() + " sx = " + sx + " sy = " + sy + " swid = " + sWidth + " sheig = " + sHeight);
+
         glBegin(GL_LINE_LOOP);
         {
             glColor3dv(BLACK);
