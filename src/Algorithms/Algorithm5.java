@@ -4,162 +4,67 @@ import Graph.*;
 import Visualization.GraphVisualization;
 
 import java.util.ArrayList;
-import java.util.Comparator;
+
+import static Graph.Vertex.isIntersect;
 
 class Algorithm5 {
-    static int maxDepth = 0;
-
     private static double R;
     private static final int WIDTH = GraphVisualization.WIDTH;
     private static final int HEIGHT = GraphVisualization.HEIGHT;
-    private static final double RADIAL_COEFFICIENT = 0.7;
+    private static final double RADIAL_COEFFICIENT = 0.9;
+    private static final double R_OFFSET = Graph.R_OFFSET;
 
     private static void deleteIntersections(Graph tree) {
-        ArrayList<ArrayList<Vertex>> verticesByDepth = new ArrayList<ArrayList<Vertex>>();
-
-        for (int i = 0; i <= maxDepth; i++)
-            verticesByDepth.add(new ArrayList<>());
-
         for (Vertex v: tree.getVertices()) {
-            verticesByDepth.get(v.getDepth()).add(v);
-        }
+            ArrayList<Vertex> currentDepthWithoutV = new ArrayList<Vertex>();
+            currentDepthWithoutV.addAll(tree.getVerticesByDepth(v.getDepth()));
+            currentDepthWithoutV.remove(v);
 
-        for (int i = 1; i <= maxDepth; i++) {
-            ArrayList<Vertex> currentDepth = verticesByDepth.get(i);
-            currentDepth.sort(angleComparator);
+            makeRadialOffsetWithoutIntersections(v, currentDepthWithoutV, tree);
 
-            for (Vertex v: currentDepth) {
-                double offset = makeRadialOffsetWithoutIntersections(v, verticesByDepth.get(i - 1), tree);
-
-                if (offset != 0.0) {
-
-                    for (Vertex u: currentDepth) {
-
-                        if (u != v) {
-                            u.setVertex(u.getR() + offset, u.getAngle());
-                        }
-                    }
-                }
-            }
-
-            for (Vertex v: currentDepth) {
-                double angleOffset = makeAngleOffsetWithoutIntersections(v, currentDepth);
-
-                if (angleOffset == -1.0) {
-                    double radialOffset = makeRadialOffsetWithoutIntersections(v, currentDepth, tree);
-
-                    for (Vertex u: currentDepth) {
-
-                        if (u != v) {
-                            u.setVertex(u.getR() + radialOffset, u.getAngle());
-                        }
-                    }
-                }
-            }
+            if (v.getDepth() != tree.getMaxDepth())
+                makeRadialOffsetWithoutIntersections(v, tree.getVerticesByDepth(v.getDepth() + 1), tree);
         }
     }
 
-    private static final double ANGLE_OFFSET = Math.PI / 18; //10 градусов
-    private static Comparator<Vertex> angleComparator = (Comparator<Vertex>) (o1, o2) -> {
-        double angle1 = o1.getAngle();
-        double angle2 = o2.getAngle();
-        return Double.compare(angle1, angle2);
-    };
+    //static final double R_OFFSET = 5.0;
 
-    private static double makeAngleOffsetWithoutIntersections(Vertex v, ArrayList<Vertex> vertices) {
-        double offset = 0.0;
-        for (Vertex u: vertices) {
-            if (u != v) {
-                boolean intersection = isIntersect(v, u);
-                if (intersection) {
-                    double angle = v.getAngle();
-                    double x = v.getX();
-                    double y = v.getY();
-                    double delta = v.getAngle() - u.getAngle();
-
-                    int indexOfV = vertices.indexOf(v);
-                    Vertex w = vertices.get(delta < 0 ? (indexOfV - 1) % vertices.size() : (indexOfV + 1) % vertices.size());
-
-                    if (delta > 0.0) {
-                        boolean VWintersection = false;
-
-                        while (isIntersect(v, u) && !VWintersection) {
-                            v.setAngle(v.getAngle() + ANGLE_OFFSET);
-                            offset += ANGLE_OFFSET;
-                            v.setX(v.getR() * Math.cos(v.getAngle()));
-                            v.setY(v.getR() * Math.sin(v.getAngle()));
-                            VWintersection = isIntersect(v, w);
-                        }
-
-                        if (VWintersection) {
-                            v.setAngle(angle);
-                            v.setX(x);
-                            v.setY(y);
-                            return -1.0;
-
-                        } else
-                            return offset;
-                    } else {
-                        boolean VWintersection = false;
-
-                        while (isIntersect(v, u) && !VWintersection) {
-                            v.setAngle(v.getAngle() - ANGLE_OFFSET);
-                            offset -= ANGLE_OFFSET;
-                            v.setX(v.getR() * Math.cos(v.getAngle()));
-                            v.setY(v.getR() * Math.sin(v.getAngle()));
-                            VWintersection = isIntersect(v, w);
-                        }
-
-                        if (VWintersection) {
-                            v.setAngle(angle);
-                            v.setX(x);
-                            v.setY(y);
-                            return -1.0;
-
-                        } else
-                            return offset;
-                    }
-                }
-            }
-        }
-        return offset;
-    }
-
-    static final double R_OFFSET = 10.0;
-
-    private static double makeRadialOffsetWithoutIntersections(Vertex v, ArrayList<Vertex> vertices, Graph tree) {
+    private static void makeRadialOffsetWithoutIntersections(Vertex v, ArrayList<Vertex> vertices, Graph tree) {
         double offset = 0.0;
 
+        boolean wasIntersection = false;
+
         for (Vertex u: vertices) {
+            while (isIntersect(v, u)) {
+                wasIntersection = true;
+                offset += R_OFFSET;
+                u.setVertexByPolar(u.getR() + R_OFFSET, u.getAngle());
 
-            if (u != v) {
-
-                System.out.println("INTERSECTION? v = " + v.getIndex() + " u = " + u.getIndex() + " " + isIntersect(v, u));
-
-                while (isIntersect(v, u)) {
-                    int i = tree.getRadials().indexOf(v.getR());
-                    double r = tree.getRadials().get(i);
-
-                    r += R_OFFSET;
-                    offset += R_OFFSET;
-                    tree.getRadials().set(i, r);
-
-                    v.setVertex(v.getR() + R_OFFSET, v.getAngle());
-                }
+                if (u.getDepth() == v.getDepth())
+                    v.setVertexByPolar(v.getR() + R_OFFSET, v.getAngle());
             }
+
+            if (wasIntersection) {
+                for (Vertex w: vertices) {
+                    if (w != u) {
+                        w.setVertexByPolar(w.getR() + offset, w.getAngle());
+                    }
+                }
+
+                for (int i = u.getDepth() + 1; i <= tree.getMaxDepth(); i++)
+                    for (Vertex q: tree.getVerticesByDepth(i))
+                        q.setVertexByPolar(q.getR() + offset, q.getAngle());
+            }
+
+            wasIntersection = false;
+            offset = 0.0;
         }
-
-        return offset;
-    }
-
-    static boolean isIntersect(Vertex v, Vertex u) {
-        return v.isIn(u);
     }
 
     private static void addFirstRadii(Graph tree) {
-        R = (WIDTH < HEIGHT? WIDTH : HEIGHT)/ maxDepth * RADIAL_COEFFICIENT; //раньше радиус был константный
-
-        tree.getRadials().add(R);
+        R = (WIDTH < HEIGHT? WIDTH : HEIGHT)/ tree.getMaxDepth() / 2 * RADIAL_COEFFICIENT; //раньше радиус был константный
+        //R = 50.0;
+        //tree.getRadials().add(R);
     }
 
     static Vertex findRoot(Graph tree) {
@@ -176,15 +81,6 @@ class Algorithm5 {
             throw new RuntimeException("ERROR root is null");
         else
             return root;
-    }
-
-    static void calculateDepth(Vertex root, int depth) {
-        for (Vertex v: root.getChild()) {
-            v.setDepth(depth + 1);
-            if (depth + 1 > maxDepth)
-                maxDepth = depth + 1;
-            calculateDepth(v, depth + 1);
-        }
     }
 
     private static int leavesCount = 0;
@@ -229,7 +125,7 @@ class Algorithm5 {
 
             double mu = theta + ((beta - alpha) * lambda / k);
 
-            c.setVertex(R_D, (theta + mu) / 2);
+            c.setVertexByPolar(R_D, (theta + mu) / 2);
 
             if (c.getChild().size() > 0)
                 radialPositions(T, c, theta, mu);
@@ -241,14 +137,14 @@ class Algorithm5 {
     static void useAlgorithm(Graph tree) {
         Vertex root = findRoot(tree);
 
-        calculateDepth(root, 0);
-
-        System.out.println(tree);
+        tree.calculateMaxDepth(root);
 
         addFirstRadii(tree);
 
         radialPositions(tree, root, 0, 2 * Math.PI);
 
         deleteIntersections(tree);
+
+        tree.fillRadials5();
     }
 }
