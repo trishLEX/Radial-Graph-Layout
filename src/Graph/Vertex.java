@@ -1,11 +1,13 @@
 package Graph;
 
+import org.joml.Vector2d;
+
 import java.util.ArrayList;
 
 /* x и y - координаты центра вершины */
 public class Vertex {
-    static final double VERTEX_WIDTH = 14.0;
-    static final double VERTEX_HEIGHT = 14.0;
+    static final double VERTEX_WIDTH = 10.0;
+    static final double VERTEX_HEIGHT = 10.0;
 
     private ArrayList<Vertex> child;
     private Vertex parent;
@@ -201,7 +203,7 @@ public class Vertex {
         for (Double[] point: this.getPoints()) {
             double px = point[0];
             double py = point[1];
-            if (px < vPoints.get(0)[0] && px > vPoints.get(1)[0] && py < vPoints.get(0)[1] && py > vPoints.get(3)[1]) {
+            if (px <= vPoints.get(0)[0] && px >= vPoints.get(1)[0] && py <= vPoints.get(0)[1] && py >= vPoints.get(3)[1]) {
                 return true;
             }
         }
@@ -209,7 +211,7 @@ public class Vertex {
         for (Double[] point: this.getPoints()) {
             double px = point[0];
             double py = point[1];
-            if (px < vPoints.get(7)[0] && px > vPoints.get(4)[0] && py < vPoints.get(7)[1] && py > vPoints.get(6)[1]) {
+            if (px <= vPoints.get(7)[0] && px >= vPoints.get(4)[0] && py <= vPoints.get(7)[1] && py >= vPoints.get(6)[1]) {
                 return true;
             }
         }
@@ -217,7 +219,7 @@ public class Vertex {
         return false;
     }
 
-    public void setVertex(double r, double angle) {
+    public void setVertexByPolar(double r, double angle) {
         this.r = r;
         this.angle = angle;
         this.setX(r * Math.cos(angle));
@@ -226,5 +228,72 @@ public class Vertex {
 
     public double distTo(Vertex v) {
         return Math.sqrt(Math.pow((this.getX() - v.getX()), 2) + Math.pow((this.getY() - v.getY()), 2));
+    }
+
+    public void castToCartesianCoordinates() {
+        if (this.getParent() != null && this.getParent().isRoot) {
+            this.setX(this.getR() * Math.cos(this.getAngle()));
+            this.setY(this.getR() * Math.sin(this.getAngle()));
+        }
+
+        else {
+
+            if (!this.isRoot) {
+                double r = cosinesLaw(this.getR(), this.getParent().getR(), this.getAngle());
+                double phi = this.getParent().getAngle() - Math.asin(this.getR() * Math.sin(this.getAngle()) / cosinesLaw(this.getR(), this.getParent().getR(), this.getAngle()));
+
+                this.setVertexByPolar(r, phi);
+            }
+        }
+    }
+
+    private static double cosinesLaw(double a, double b, double angle) {
+        return Math.sqrt(a * a + b * b - 2 * a * b * Math.cos(angle));
+    }
+
+    public void setVertexByCartesian(double x, double y) {
+        this.setX(x);
+        this.setY(y);
+
+        if (x == 0 && y == 0)
+            this.angle = 0;
+        else if (x > 0 && y >= 0)
+            this.angle = Math.atan2(y, x);
+        else if (x > 0 && y < 0)
+            this.angle = Math.atan2(y, x) + 2 * Math.PI;
+        else if (x < 0)
+            this.angle = Math.atan2(y ,x) + Math.PI;
+        else if (x == 0 && y > 0)
+            this.angle = Math.PI / 2;
+        else
+            this.angle = 3 * Math.PI / 2;
+
+        this.r = Math.sqrt(Math.pow(x, 2) + Math.pow(y, 2));
+    }
+
+    public void moveFromParent(double offset) {
+        //System.out.println("MOVING this = " + this.index + " offset = " + offset);
+
+        Vector2d pc = new Vector2d(this.getX() - this.getParent().getX(), this.getY() - this.getParent().getY());
+        Vector2d temp = new Vector2d(pc.x, pc.y);
+        double pcLength = pc.length();
+        pcLength = (pcLength + offset) / pcLength; //теперь pcLength - коэффициент растяжения
+        pc.mul(pcLength);
+        //System.out.println("MOVING pc = " + pc + " temp = " + temp);
+        this.setVertexByCartesian(this.getParent().getX() + pc.x, this.getParent().getY() + pc.y);
+        pc.sub(temp);
+        for (Vertex v: this.child)
+            v.moveFromParent(pc);
+    }
+
+    public void moveFromParent(Vector2d vector) {
+        //System.out.println("  vector = " + vector);
+        this.setVertexByCartesian(this.x + vector.x, this.y + vector.y);
+        for (Vertex v: this.child)
+            v.moveFromParent(vector);
+    }
+
+    public static boolean isIntersect(Vertex v, Vertex u) {
+        return v.isIn(u) || u.isIn(v);
     }
 }
