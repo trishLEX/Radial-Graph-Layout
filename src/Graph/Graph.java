@@ -5,11 +5,19 @@ import java.util.Scanner;
 
 public class Graph {
     private final double VERTEX_R = 0.015;
+    public static final double R_OFFSET = 5.0;
 
     private ArrayList<Vertex> vertices;
     private double VertexR;
     private ArrayList<Double> radials;
+    private ArrayList<ArrayList<Vertex>> verticesByDepth;
     private double[][] w;
+
+    public int getMaxDepth() {
+        return maxDepth;
+    }
+
+    private int maxDepth;
 
     public Graph(int count) {
         this.vertices = new ArrayList<>();
@@ -21,6 +29,8 @@ public class Graph {
         this.VertexR = VERTEX_R;
 
         this.radials = new ArrayList<>();
+        this.maxDepth = 0;
+        this.verticesByDepth = new ArrayList<>();
 
         this.w = new double[count][count];
     }
@@ -83,5 +93,63 @@ public class Graph {
 
     public void setRadials(ArrayList<Double> radials) {
         this.radials = radials;
+    }
+
+    public void fillRadials3() {
+        this.getRadials().clear();
+
+        for (Vertex v: this.getVertices()) {
+            if (v.getChild().size() != 0)
+                this.getRadials().add(v.distTo(v.getChild().get(0)));
+            else
+                //this.getRadials().add(v.distTo(v.getParent()));
+                this.getRadials().add(0.0);
+        }
+    }
+
+    public void fillRadials5() {
+        this.getRadials().clear();
+
+        for (int i = 0; i <= this.maxDepth; i++) {
+            this.radials.add(this.getVerticesByDepth(i).get(0).getR());
+        }
+    }
+
+    private void calculateMaxDepth(Vertex root, int depth) {
+        for (Vertex v: root.getChild()) {
+            v.setDepth(depth + 1);
+            if (depth + 1 > maxDepth)
+                maxDepth = depth + 1;
+            calculateMaxDepth(v, depth + 1);
+        }
+    }
+
+    public void calculateMaxDepth(Vertex root) {
+        //root.setDepth(0);
+        calculateMaxDepth(root, 0);
+
+        ArrayList<ArrayList<Vertex>> verticesByDepth = new ArrayList<ArrayList<Vertex>>();
+
+        for (int i = 0; i <= maxDepth; i++)
+            verticesByDepth.add(new ArrayList<>());
+
+        for (Vertex v: this.vertices) {
+            verticesByDepth.get(v.getDepth()).add(v);
+        }
+
+        this.verticesByDepth = verticesByDepth;
+        //System.out.println(this.verticesByDepth);
+    }
+
+    public ArrayList<ArrayList<Vertex>> getVerticesByDepth() {
+        return this.verticesByDepth;
+    }
+
+    public ArrayList<Vertex> getVerticesByDepth(int depth) {
+        return this.verticesByDepth.get(depth);
+    }
+
+    public void setVerticesByDepth(ArrayList<ArrayList<Vertex>> verticesByDepth) {
+        this.verticesByDepth = verticesByDepth;
     }
 }
