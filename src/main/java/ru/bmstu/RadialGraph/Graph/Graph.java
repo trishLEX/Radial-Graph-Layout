@@ -1,4 +1,4 @@
-package Graph;
+package main.java.ru.bmstu.RadialGraph.Graph;
 
 import java.util.ArrayList;
 import java.util.Scanner;

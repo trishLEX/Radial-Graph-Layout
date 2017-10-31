@@ -1,6 +1,6 @@
-package Algorithms;
+package main.java.ru.bmstu.RadialGraph.Algorithms;
 
-import Graph.*;
+import main.java.ru.bmstu.RadialGraph.Graph.*;
 
 import java.util.ArrayDeque;
 import java.util.ArrayList;

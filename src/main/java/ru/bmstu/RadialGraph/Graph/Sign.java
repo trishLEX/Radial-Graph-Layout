@@ -1,4 +1,4 @@
-package Graph;
+package main.java.ru.bmstu.RadialGraph.Graph;
 
 public class Sign {
     static final double SIGN_WIDTH = 7.0 * Vertex.VERTEX_WIDTH;

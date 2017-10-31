@@ -1,7 +1,8 @@
-package Visualization;
+package main.java.ru.bmstu.RadialGraph.Visualization;
 
-import Algorithms.Calculation;
-import Graph.*;
+import main.java.ru.bmstu.RadialGraph.Algorithms.Calculation;
+import main.java.ru.bmstu.RadialGraph.Graph.*;
+
 import org.lwjgl.glfw.GLFW;
 import org.lwjgl.glfw.GLFWErrorCallback;
 import org.lwjgl.opengl.GL;
@@ -9,6 +10,7 @@ import org.lwjgl.opengl.GL;
 import static java.lang.Math.PI;
 import static java.lang.Math.cos;
 import static java.lang.Math.sin;
+
 import static org.lwjgl.glfw.GLFW.glfwInit;
 import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.opengl.GL11.GL_DEPTH_TEST;
@@ -22,7 +24,7 @@ class Drawer {
     private static final double[] BLACK = {0.0, 0.0, 0.0};
     private static final double[] WHITE = {1.0, 1.0, 1.0};
 
-    private static final String NAME = "Radial Graph";
+    private static final String NAME = "Radial main.java.ru.bmstu.RadialGraph.Graph";
     private static final int WIDTH = Calculation.WIDTH;
     private static final int HEIGHT = Calculation.HEIGHT;
 

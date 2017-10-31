@@ -1,10 +1,10 @@
-package Algorithms;
+package main.java.ru.bmstu.RadialGraph.Algorithms;
 
-import Graph.*;
+import main.java.ru.bmstu.RadialGraph.Graph.*;
 
 import java.util.ArrayList;
 
-import static Graph.Vertex.isIntersect;
+import static main.java.ru.bmstu.RadialGraph.Graph.Vertex.isIntersect;
 
 class Algorithm3 {
     private static final double R = 100;

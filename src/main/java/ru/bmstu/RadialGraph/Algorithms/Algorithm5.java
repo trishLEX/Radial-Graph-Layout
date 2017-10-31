@@ -1,11 +1,11 @@
-package Algorithms;
+package main.java.ru.bmstu.RadialGraph.Algorithms;
 
-import Graph.*;
-import Visualization.GraphVisualization;
+import main.java.ru.bmstu.RadialGraph.Graph.*;
+import main.java.ru.bmstu.RadialGraph.Visualization.GraphVisualization;
 
 import java.util.ArrayList;
 
-import static Graph.Vertex.isIntersect;
+import static main.java.ru.bmstu.RadialGraph.Graph.Vertex.isIntersect;
 
 class Algorithm5 {
     private static double R;
@@ -26,8 +26,6 @@ class Algorithm5 {
                 makeRadialOffsetWithoutIntersections(v, tree.getVerticesByDepth(v.getDepth() + 1), tree);
         }
     }
-
-    //static final double R_OFFSET = 5.0;
 
     private static void makeRadialOffsetWithoutIntersections(Vertex v, ArrayList<Vertex> vertices, Graph tree) {
         double offset = 0.0;
@@ -66,22 +64,6 @@ class Algorithm5 {
         //R = 50.0;
         //tree.getRadials().add(R);
     }
-
-//    static Vertex findRoot(Graph tree) {
-//        Vertex root = null;
-//
-//        for (Vertex v: tree.getVertices()) {
-//            if (v.isRoot()) {
-//                root = v;
-//                break;
-//            }
-//        }
-//
-//        if (root == null)
-//            throw new RuntimeException("ERROR root is null");
-//        else
-//            return root;
-//    }
 
     private static int leavesCount = 0;
     private static int leavesCounter(Vertex root) {
