@@ -53,13 +53,12 @@ public class Calculation {
             makeTree(graph.get(START_INDEX));
             Algorithm3.useAlgorithm(graph);
         }
-        //printGraph();
 
         if (type == 5) {
             makeTree(graph.get(START_INDEX));
             Algorithm5.useAlgorithm(graph);
         }
-        //Algorithm3.useAlgorithm(graph);
+
         System.out.println(graph);
 
         if (type == 1) {
@@ -79,7 +78,7 @@ public class Calculation {
     }
 
     private void convertCoordinates(Graph graph) {
-        //calculateWidthAndHeight(graph);
+        calculateWidthAndHeight(graph);
 
         for (Vertex v: graph.getVertices()) {
             double sx = v.getSign().getX();
@@ -90,7 +89,6 @@ public class Calculation {
             v.setWidth(v.getWidth() / WIDTH * 2);
             v.setHeight(v.getHeight() / HEIGHT * 2);
 
-            //System.out.println("old " + v.getIndex() + " sign y = " + v.getSign().getY() + " height = " + HEIGHT + " y / height = " + (v.getSign().getY() / HEIGHT));
             v.getSign().setX(sx / WIDTH * 2);
             v.getSign().setY(sy / HEIGHT * 2);
             v.getSign().setWidth(v.getSign().getWidth() / WIDTH * 2);
@@ -124,33 +122,23 @@ public class Calculation {
 
         System.out.println("width = " + width + " height = " + height + " right = " + right + " left = " + left + " up = " + up + " down = " + down);
 
-        translateLeft(graph, right, left);
-        translateUp(graph, down, up);
-
         System.out.println("width = " + width + " height = " + height + " right = " + right + " left = " + left + " up = " + up + " down = " + down);
-
-//        if (type == 3 && width < WIDTH && height < HEIGHT) {
-//            if (right > WIDTH / 2)
-//                translateLeft(graph, right, left);
-//            else if (left < - WIDTH / 2)
-//                translateRight(graph, left, right);
-//            else if (up > HEIGHT / 2)
-//                translateDown(graph, up, down);
-//            else if (down < - HEIGHT / 2)
-//                translateUp(graph, down, up);
-//        }
 
         if (width > WIDTH || height > HEIGHT) {
             double side = width > height? width : height;
             WIDTH = HEIGHT = (int) side + 1;
             System.out.println("HERE HERE HERE");
         }
+
+        translateRight(graph, left, right);
+        translateLeft(graph, right, left);
+        translateDown(graph, up, down);
+        translateUp(graph, down, up);
     }
 
     private void translateLeft(Graph graph, double right, double left) {
         double offset = 0.0;
-        while (right > (double) WIDTH / 2.0 && left > - (double) WIDTH / 2.0) {
-            //System.out.println("left = " + left + " WIDTH = " + WIDTH);
+        while (right > (double) WIDTH / 2.0 - 1.0 && left > - (double) WIDTH / 2.0 + 1.0) {
             right -= 1.0;
             left -= 1.0;
             offset -= 1.0;
@@ -165,7 +153,7 @@ public class Calculation {
 
     private void translateRight(Graph graph, double left, double right) {
         double offset = 0.0;
-        while (left < - WIDTH / 2 && right < WIDTH / 2) {
+        while (left < - (double) WIDTH / 2.0 + 1.0 && right < (double) WIDTH / 2.0 - 1.0) {
             left += 5.0;
             offset += 5.0;
         }
@@ -177,7 +165,7 @@ public class Calculation {
 
     private void translateDown(Graph graph, double up, double down) {
         double offset = 0.0;
-        while (up > HEIGHT / 2 || down > - HEIGHT / 2) {
+        while (up > (double) HEIGHT / 2.0 - 1.0 && down > - (double) HEIGHT / 2.0 + 1.0) {
             up -= 5.0;
             offset -= 5.0;
         }
@@ -189,7 +177,7 @@ public class Calculation {
 
     private void translateUp(Graph graph, double down, double up) {
         double offset = 0.0;
-        while (down < - (double) HEIGHT / 2.0 && up < (double) HEIGHT / 2.0) {
+        while (down < - (double) HEIGHT / 2.0 + 1 && up < (double) HEIGHT / 2.0 - 1) {
             down += 1.0;
             up += 1.0;
             offset += 1.0;
@@ -200,14 +188,5 @@ public class Calculation {
         }
 
         System.out.println("up = " + up + " down = " + down);
-    }
-
-    private void printGraph() {
-        for (Vertex v: graph.getVertices()) {
-            System.out.println("v = " + v.getIndex());
-            for (Vertex u: v.getChild()) {
-                System.out.println("    childs = " + u.getIndex() + " " + (u.getParent() != null ? u.getParent().getIndex() : "null"));
-            }
-        }
     }
 }
