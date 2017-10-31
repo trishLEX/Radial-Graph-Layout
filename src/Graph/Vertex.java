@@ -272,14 +272,11 @@ public class Vertex {
     }
 
     public void moveFromParent(double offset) {
-        //System.out.println("MOVING this = " + this.index + " offset = " + offset);
-
         Vector2d pc = new Vector2d(this.getX() - this.getParent().getX(), this.getY() - this.getParent().getY());
         Vector2d temp = new Vector2d(pc.x, pc.y);
         double pcLength = pc.length();
         pcLength = (pcLength + offset) / pcLength; //теперь pcLength - коэффициент растяжения
         pc.mul(pcLength);
-        //System.out.println("MOVING pc = " + pc + " temp = " + temp);
         this.setVertexByCartesian(this.getParent().getX() + pc.x, this.getParent().getY() + pc.y);
         pc.sub(temp);
         for (Vertex v: this.child)
@@ -287,7 +284,6 @@ public class Vertex {
     }
 
     public void moveFromParent(Vector2d vector) {
-        //System.out.println("  vector = " + vector);
         this.setVertexByCartesian(this.x + vector.x, this.y + vector.y);
         for (Vertex v: this.child)
             v.moveFromParent(vector);
