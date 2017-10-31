@@ -170,7 +170,7 @@ class Algorithm3 {
     }
 
     static void useAlgorithm(Graph tree) {
-        Vertex root = Algorithm5.findRoot(tree);
+        Vertex root = tree.findRoot();
 
         tree.calculateMaxDepth(root);
 

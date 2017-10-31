@@ -67,21 +67,21 @@ class Algorithm5 {
         //tree.getRadials().add(R);
     }
 
-    static Vertex findRoot(Graph tree) {
-        Vertex root = null;
-
-        for (Vertex v: tree.getVertices()) {
-            if (v.isRoot()) {
-                root = v;
-                break;
-            }
-        }
-
-        if (root == null)
-            throw new RuntimeException("ERROR root is null");
-        else
-            return root;
-    }
+//    static Vertex findRoot(Graph tree) {
+//        Vertex root = null;
+//
+//        for (Vertex v: tree.getVertices()) {
+//            if (v.isRoot()) {
+//                root = v;
+//                break;
+//            }
+//        }
+//
+//        if (root == null)
+//            throw new RuntimeException("ERROR root is null");
+//        else
+//            return root;
+//    }
 
     private static int leavesCount = 0;
     private static int leavesCounter(Vertex root) {
@@ -135,7 +135,7 @@ class Algorithm5 {
     }
 
     static void useAlgorithm(Graph tree) {
-        Vertex root = findRoot(tree);
+        Vertex root = tree.findRoot();
 
         tree.calculateMaxDepth(root);
 

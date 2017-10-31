@@ -11,6 +11,8 @@ public class Graph {
     private double VertexR;
     private ArrayList<Double> radials;
     private ArrayList<ArrayList<Vertex>> verticesByDepth;
+    private Vertex root;
+
     private double[][] w;
 
     public int getMaxDepth() {
@@ -31,6 +33,7 @@ public class Graph {
         this.radials = new ArrayList<>();
         this.maxDepth = 0;
         this.verticesByDepth = new ArrayList<>();
+        this.root = null;
 
         this.w = new double[count][count];
     }
@@ -79,7 +82,6 @@ public class Graph {
             res += "v = " + v.getIndex() +  " depth = " + v.getDepth() + "\n";
             for (Vertex u: v.getChild()) {
                 res += "    childs = " + u.getIndex() + " " +
-                        //(u.getParent() != null ? u.getParent().getIndex() : "null") +
                         " depth = " + u.getDepth() + "\n";
             }
         }
@@ -102,7 +104,6 @@ public class Graph {
             if (v.getChild().size() != 0)
                 this.getRadials().add(v.distTo(v.getChild().get(0)));
             else
-                //this.getRadials().add(v.distTo(v.getParent()));
                 this.getRadials().add(0.0);
         }
     }
@@ -138,7 +139,6 @@ public class Graph {
         }
 
         this.verticesByDepth = verticesByDepth;
-        //System.out.println(this.verticesByDepth);
     }
 
     public ArrayList<ArrayList<Vertex>> getVerticesByDepth() {
@@ -151,5 +151,32 @@ public class Graph {
 
     public void setVerticesByDepth(ArrayList<ArrayList<Vertex>> verticesByDepth) {
         this.verticesByDepth = verticesByDepth;
+    }
+
+    public Vertex getRoot() {
+        return root;
+    }
+
+    public void setRoot(Vertex root) {
+        this.root = root;
+    }
+
+    public Vertex findRoot() {
+        Vertex root = null;
+
+        for (Vertex v: this.vertices) {
+            if (v.isRoot()) {
+                root = v;
+                break;
+            }
+        }
+
+        if (root == null)
+            throw new RuntimeException("ERROR root is null");
+
+        else {
+            this.root = root;
+            return root;
+        }
     }
 }
