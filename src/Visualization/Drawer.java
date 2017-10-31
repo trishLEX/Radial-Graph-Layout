@@ -144,8 +144,8 @@ class Drawer {
             glBegin(GL_LINE_LOOP);
             {
                 for (int i = 0; i < NUMBER_OF_SIDES; i++) {
-                    glVertex2d(r * cos(i * PI * 2 / NUMBER_OF_SIDES),
-                               r * sin(i * PI * 2 / NUMBER_OF_SIDES));
+                    glVertex2d(this.graph.getRoot().getX() + r * cos(i * PI * 2 / NUMBER_OF_SIDES),
+                               this.graph.getRoot().getY() + r * sin(i * PI * 2 / NUMBER_OF_SIDES));
                 }
             }
             glEnd();
