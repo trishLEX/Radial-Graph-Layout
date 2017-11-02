@@ -1,11 +1,11 @@
-package main.java.ru.bmstu.RadialGraph.Algorithms;
+package ru.bmstu.RadialGraph.Algorithms;
 
-import main.java.ru.bmstu.RadialGraph.Graph.*;
-import main.java.ru.bmstu.RadialGraph.Visualization.GraphVisualization;
+import ru.bmstu.RadialGraph.Graph.*;
+import ru.bmstu.RadialGraph.Visualization.GraphVisualization;
 
 import java.util.ArrayList;
 
-import static main.java.ru.bmstu.RadialGraph.Graph.Vertex.isIntersect;
+import static ru.bmstu.RadialGraph.Graph.Vertex.isIntersect;
 
 class Algorithm5 {
     private static double R;
@@ -117,13 +117,19 @@ class Algorithm5 {
     }
 
     static void useAlgorithm(Graph tree) {
-        Vertex root = tree.findRoot();
+        Vertex root = tree.getRoot();
+
+        System.out.println("Root is found");
 
         tree.calculateMaxDepth(root);
+
+        System.out.println("Max depth found");
 
         addFirstRadii(tree);
 
         radialPositions(tree, root, 0, 2 * Math.PI);
+
+        System.out.println("Positions are calculated");
 
         deleteIntersections(tree);
 

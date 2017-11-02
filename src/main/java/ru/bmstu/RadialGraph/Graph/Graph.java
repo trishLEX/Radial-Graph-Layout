@@ -1,4 +1,4 @@
-package main.java.ru.bmstu.RadialGraph.Graph;
+package ru.bmstu.RadialGraph.Graph;
 
 import java.util.ArrayList;
 import java.util.Scanner;
@@ -79,7 +79,7 @@ public class Graph {
     public String toString() {
         String res = "";
         for (Vertex v: vertices) {
-            res += "v = " + v.getIndex() +  " depth = " + v.getDepth() + "\n";
+            res += "v = " + v +  " depth = " + v.getDepth() + "\n";
             for (Vertex u: v.getChild()) {
                 res += "    childs = " + u.getIndex() + " " +
                         " depth = " + u.getDepth() + "\n";
@@ -118,6 +118,7 @@ public class Graph {
 
     private void calculateMaxDepth(Vertex root, int depth) {
         for (Vertex v: root.getChild()) {
+            System.out.println(depth);
             v.setDepth(depth + 1);
             if (depth + 1 > maxDepth)
                 maxDepth = depth + 1;
@@ -159,24 +160,5 @@ public class Graph {
 
     public void setRoot(Vertex root) {
         this.root = root;
-    }
-
-    public Vertex findRoot() {
-        Vertex root = null;
-
-        for (Vertex v: this.vertices) {
-            if (v.isRoot()) {
-                root = v;
-                break;
-            }
-        }
-
-        if (root == null)
-            throw new RuntimeException("ERROR root is null");
-
-        else {
-            this.root = root;
-            return root;
-        }
     }
 }

@@ -1,4 +1,4 @@
-package main.java.ru.bmstu.RadialGraph.Graph;
+package ru.bmstu.RadialGraph.Graph;
 
 import org.joml.Vector2d;
 
@@ -190,7 +190,7 @@ public class Vertex {
     @Override
     public String toString() {
         String res = "";
-        res += this.index;
+        res += this.index + "(" + this.x + ", " + this.y + ")";
         return res;
     }
 

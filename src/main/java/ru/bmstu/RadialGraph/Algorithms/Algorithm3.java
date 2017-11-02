@@ -1,10 +1,10 @@
-package main.java.ru.bmstu.RadialGraph.Algorithms;
+package ru.bmstu.RadialGraph.Algorithms;
 
-import main.java.ru.bmstu.RadialGraph.Graph.*;
+import ru.bmstu.RadialGraph.Graph.*;
 
 import java.util.ArrayList;
 
-import static main.java.ru.bmstu.RadialGraph.Graph.Vertex.isIntersect;
+import static ru.bmstu.RadialGraph.Graph.Vertex.isIntersect;
 
 class Algorithm3 {
     private static final double R = 100;
@@ -59,6 +59,7 @@ class Algorithm3 {
         if (currentDepth != 0)
             throw new RuntimeException("Depth of the root is not null");
 
+        //TODO тут ошибка, необходимо чтобы вершины обрабатывались в порядке обхода в глубину
         for (Vertex v: tree.getVertices()) {
             if (v.isRoot()) {
                 root.setX(0);
@@ -66,7 +67,7 @@ class Algorithm3 {
                 root.setR(R);
             }
             else {
-                if (v.getParent() == root) {
+                if (v.getParent().isRoot()) {
                     v.setAngle(2 * Math.PI * root.getChild().indexOf(v) / root.getChild().size());
                     v.setR(R);
                 }
@@ -85,12 +86,15 @@ class Algorithm3 {
                     }
                 }
             }
+
+            System.out.println("v = " + v + " angle = " + v.getAngle() + " r = " + v.getR());
             tree.getRadials().add(v.getR());
         }
     }
 
     private static void deleteIntersections(Graph tree) {
         for (Vertex v: tree.getVertices()) {
+            System.out.println("v = " + v.getIndex());
             makeRadialOffsetWithoutIntersections(v, v.getChild());
 
             for (Vertex u: v.getChild()) {
@@ -102,14 +106,17 @@ class Algorithm3 {
             }
         }
 
+        System.out.println("Relatives intersections are deleted");
 
         for (Vertex v: tree.getVertices()){
             for (Vertex u: tree.getVertices()) {
+                System.out.println("v = " + v.getIndex() + " u = " + u.getIndex() + " isIntersect? " + isIntersect(v, u));
                 if (v != u && isIntersect(v, u)) {
                     makeRadialOffsetWithoutIntersections(v, u);
                 }
             }
         }
+        System.out.println("Random intersections are deleted");
     }
 
     private static void makeRadialOffsetWithoutIntersections(Vertex v, Vertex u) {
@@ -123,6 +130,8 @@ class Algorithm3 {
             while (tempV.getDepth() != tempU.getDepth())
                 tempU = tempU.getParent();
 
+        System.out.println("tempV and tempU are founded");
+
         Vertex vP = tempV.getParent();
         Vertex uP = tempU.getParent();
 
@@ -133,9 +142,18 @@ class Algorithm3 {
             uP = tempU.getParent();
         }
 
+        System.out.println("General ancestor is found");
+
+        double offset = 0.0;
+
         while (isIntersect(v, u)) {
-            for (Vertex w: vP.getChild())
+            for (Vertex w: vP.getChild()) {
+                System.out.println(" w = " + w.getIndex());
+                offset += R_OFFSET;
                 w.moveFromParent(R_OFFSET);
+            }
+            if (offset > 1000)
+                break;
         }
     }
 
@@ -165,21 +183,29 @@ class Algorithm3 {
             }
             wasIntersection = false;
             offset = 0.0;
-            System.out.println("\n");
         }
     }
 
     static void useAlgorithm(Graph tree) {
-        Vertex root = tree.findRoot();
+        Vertex root = tree.getRoot();
+
+        System.out.println("Root = " + root);
 
         tree.calculateMaxDepth(root);
 
+        System.out.println("Max depth is found");
+
         radialPositions(tree, root);
+
+        System.out.println("GRAPH: " + "\n" + tree);
+        System.out.println("Radial positions are found");
 
         for (Vertex v: tree.getVertices())
             v.castToCartesianCoordinates();
 
-        deleteIntersections(tree);
+        //deleteIntersections(tree);
+
+        System.out.println("Intersections are deleted");
 
         tree.fillRadials3();
     }
