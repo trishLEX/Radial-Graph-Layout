@@ -1,25 +1,24 @@
-package main.java.ru.bmstu.RadialGraph.Graph;
+package ru.bmstu.RadialGraph.Graph;
 
 import java.util.ArrayList;
 import java.util.Scanner;
 
 public class Graph {
     private final double VERTEX_R = 0.015;
-    public static final double R_OFFSET = 5.0;
+    public static final double R_OFFSET = 1.0;
 
     private ArrayList<Vertex> vertices;
     private double VertexR;
     private ArrayList<Double> radials;
     private ArrayList<ArrayList<Vertex>> verticesByDepth;
     private Vertex root;
+    private int maxDepth;
 
     private double[][] w;
 
     public int getMaxDepth() {
         return maxDepth;
     }
-
-    private int maxDepth;
 
     public Graph(int count) {
         this.vertices = new ArrayList<>();
@@ -79,7 +78,7 @@ public class Graph {
     public String toString() {
         String res = "";
         for (Vertex v: vertices) {
-            res += "v = " + v.getIndex() +  " depth = " + v.getDepth() + "\n";
+            res += "v = " + v +  " depth = " + v.getDepth() + "\n";
             for (Vertex u: v.getChild()) {
                 res += "    childs = " + u.getIndex() + " " +
                         " depth = " + u.getDepth() + "\n";
@@ -118,6 +117,7 @@ public class Graph {
 
     private void calculateMaxDepth(Vertex root, int depth) {
         for (Vertex v: root.getChild()) {
+            System.out.println(depth);
             v.setDepth(depth + 1);
             if (depth + 1 > maxDepth)
                 maxDepth = depth + 1;
@@ -159,24 +159,5 @@ public class Graph {
 
     public void setRoot(Vertex root) {
         this.root = root;
-    }
-
-    public Vertex findRoot() {
-        Vertex root = null;
-
-        for (Vertex v: this.vertices) {
-            if (v.isRoot()) {
-                root = v;
-                break;
-            }
-        }
-
-        if (root == null)
-            throw new RuntimeException("ERROR root is null");
-
-        else {
-            this.root = root;
-            return root;
-        }
     }
 }
