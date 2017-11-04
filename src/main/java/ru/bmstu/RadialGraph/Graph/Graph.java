@@ -5,21 +5,20 @@ import java.util.Scanner;
 
 public class Graph {
     private final double VERTEX_R = 0.015;
-    public static final double R_OFFSET = 5.0;
+    public static final double R_OFFSET = 1.0;
 
     private ArrayList<Vertex> vertices;
     private double VertexR;
     private ArrayList<Double> radials;
     private ArrayList<ArrayList<Vertex>> verticesByDepth;
     private Vertex root;
+    private int maxDepth;
 
     private double[][] w;
 
     public int getMaxDepth() {
         return maxDepth;
     }
-
-    private int maxDepth;
 
     public Graph(int count) {
         this.vertices = new ArrayList<>();
