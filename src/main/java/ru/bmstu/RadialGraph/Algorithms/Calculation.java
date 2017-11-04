@@ -32,17 +32,18 @@ public class Calculation {
 
     private void makeTree(Vertex v) {
         v.setRoot(true);
+        this.graph.setRoot(v);
 
         dfs(v);
 
-        for (Vertex vert: graph.getVertices()) {
+        for (Vertex vertex: graph.getVertices()) {
             ArrayList<Vertex> temp = new ArrayList<>();
-            for (Vertex u: vert.getChild()) {
-                if (u.getParent() == vert) {
+            for (Vertex u: vertex.getChild()) {
+                if (u.getParent() == vertex) {
                     temp.add(u);
                 }
             }
-            vert.setChild(temp);
+            vertex.setChild(temp);
         }
     }
 
@@ -51,11 +52,13 @@ public class Calculation {
 
         if (type == 3) {
             makeTree(graph.get(START_INDEX));
+            System.out.println("Tree is built");
             Algorithm3.useAlgorithm(graph);
         }
 
         if (type == 5) {
             makeTree(graph.get(START_INDEX));
+            System.out.println("Tree is built");
             Algorithm5.useAlgorithm(graph);
         }
 

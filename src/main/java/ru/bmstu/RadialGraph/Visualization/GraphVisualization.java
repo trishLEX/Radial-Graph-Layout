@@ -28,8 +28,13 @@ public class GraphVisualization {
     public static void main(String[] args) {
         Graph graph = makeGraph();
 
+        System.out.println("Graph is scanned");
+
         Calculation calc = new Calculation(graph);
+
         graph = calc.calculateGraph(type);
+
+        System.out.println("Graph is calculated");
 
         Drawer drawer = new Drawer(graph, type);
 

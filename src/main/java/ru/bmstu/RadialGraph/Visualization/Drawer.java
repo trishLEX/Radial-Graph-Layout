@@ -24,7 +24,7 @@ class Drawer {
     private static final double[] BLACK = {0.0, 0.0, 0.0};
     private static final double[] WHITE = {1.0, 1.0, 1.0};
 
-    private static final String NAME = "Radial main.java.ru.bmstu.RadialGraph.Graph";
+    private static final String NAME = "Radial Graph";
     private static final int WIDTH = Calculation.WIDTH;
     private static final int HEIGHT = Calculation.HEIGHT;
 

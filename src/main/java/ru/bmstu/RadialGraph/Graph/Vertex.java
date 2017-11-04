@@ -189,8 +189,8 @@ public class Vertex {
 
     @Override
     public String toString() {
-        String res = "";
-        res += this.index;
+        String res = " ";
+        res += this.index + " (" + this.x + ", " + this.y + ") r = " + this.r + " angle = " + this.angle;
         return res;
     }
 
@@ -224,6 +224,9 @@ public class Vertex {
         this.angle = angle;
         this.setX(r * Math.cos(angle));
         this.setY(r * Math.sin(angle));
+
+        if (Double.isNaN(this.x) || Double.isNaN(this.y))
+            throw new RuntimeException(" x and y are null" + this);
     }
 
     public double distTo(Vertex v) {
@@ -269,16 +272,29 @@ public class Vertex {
             this.angle = 3 * Math.PI / 2;
 
         this.r = Math.sqrt(Math.pow(x, 2) + Math.pow(y, 2));
+
+        if (Double.isNaN(this.r))
+            throw new RuntimeException("vertex = " + this + " r is NaN" + " x = " + x + " y = " + y);
     }
 
     public void moveFromParent(double offset) {
         Vector2d pc = new Vector2d(this.getX() - this.getParent().getX(), this.getY() - this.getParent().getY());
         Vector2d temp = new Vector2d(pc.x, pc.y);
         double pcLength = pc.length();
+
+        if (pcLength == 0.0)
+            throw new RuntimeException("Length is null" + this + this.getParent());
+
         pcLength = (pcLength + offset) / pcLength; //теперь pcLength - коэффициент растяжения
         pc.mul(pcLength);
+
+        if (Double.isNaN(this.getParent().getX() + pc.x) || Double.isNaN(this.getParent().getY() + pc.y))
+            throw new RuntimeException("NaN coordinates" + this.getParent().getX() + "+" + pc.x + " , " + this.getParent().getY() + "+" + pc.y + " this = " + this);
+
         this.setVertexByCartesian(this.getParent().getX() + pc.x, this.getParent().getY() + pc.y);
+
         pc.sub(temp);
+
         for (Vertex v: this.child)
             v.moveFromParent(pc);
     }

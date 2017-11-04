@@ -117,13 +117,19 @@ class Algorithm5 {
     }
 
     static void useAlgorithm(Graph tree) {
-        Vertex root = tree.findRoot();
+        Vertex root = tree.getRoot();
+
+        System.out.println("Root is found");
 
         tree.calculateMaxDepth(root);
+
+        System.out.println("Max depth found");
 
         addFirstRadii(tree);
 
         radialPositions(tree, root, 0, 2 * Math.PI);
+
+        System.out.println("Positions are calculated");
 
         deleteIntersections(tree);
 
