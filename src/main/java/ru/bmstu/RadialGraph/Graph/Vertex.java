@@ -1,4 +1,4 @@
-package main.java.ru.bmstu.RadialGraph.Graph;
+package ru.bmstu.RadialGraph.Graph;
 
 import org.joml.Vector2d;
 

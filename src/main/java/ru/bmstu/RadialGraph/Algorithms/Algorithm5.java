@@ -1,11 +1,11 @@
-package main.java.ru.bmstu.RadialGraph.Algorithms;
+package ru.bmstu.RadialGraph.Algorithms;
 
-import main.java.ru.bmstu.RadialGraph.Graph.*;
-import main.java.ru.bmstu.RadialGraph.Visualization.GraphVisualization;
+import ru.bmstu.RadialGraph.Graph.*;
+import ru.bmstu.RadialGraph.Visualization.GraphVisualization;
 
 import java.util.ArrayList;
 
-import static main.java.ru.bmstu.RadialGraph.Graph.Vertex.isIntersect;
+import static ru.bmstu.RadialGraph.Graph.Vertex.isIntersect;
 
 class Algorithm5 {
     private static double R;

@@ -1,8 +1,8 @@
-package main.java.ru.bmstu.RadialGraph.Algorithms;
+package ru.bmstu.RadialGraph.Algorithms;
 
-import main.java.ru.bmstu.RadialGraph.Graph.Graph;
-import main.java.ru.bmstu.RadialGraph.Graph.Vertex;
-import main.java.ru.bmstu.RadialGraph.Visualization.GraphVisualization;
+import ru.bmstu.RadialGraph.Graph.Graph;
+import ru.bmstu.RadialGraph.Graph.Vertex;
+import ru.bmstu.RadialGraph.Visualization.GraphVisualization;
 
 import java.util.ArrayList;
 
