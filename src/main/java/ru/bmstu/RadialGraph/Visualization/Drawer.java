@@ -1,5 +1,6 @@
 package ru.bmstu.RadialGraph.Visualization;
 
+import org.lwjgl.glfw.GLFWKeyCallback;
 import ru.bmstu.RadialGraph.Algorithms.Calculation;
 import ru.bmstu.RadialGraph.Graph.*;
 
@@ -11,7 +12,7 @@ import static java.lang.Math.PI;
 import static java.lang.Math.cos;
 import static java.lang.Math.sin;
 
-import static org.lwjgl.glfw.GLFW.glfwInit;
+import static org.lwjgl.glfw.GLFW.*;
 import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.opengl.GL11.GL_DEPTH_TEST;
 import static org.lwjgl.opengl.GL11.glEnable;
@@ -33,6 +34,8 @@ class Drawer {
     private Graph graph;
 
     private int type;
+
+    private boolean toDrawRadials = true;
 
     private void background() {
         glClearColor(1, 1, 1, 0);
@@ -59,6 +62,13 @@ class Drawer {
         GLFW.glfwMakeContextCurrent(window);
 
         GL.createCapabilities();
+
+        glfwSetKeyCallback(window, GLFWKeyCallback.create((window, key, scancode, action, mods) -> {
+            if (key == GLFW_KEY_R && action == GLFW_PRESS) {
+                toDrawRadials = !toDrawRadials;
+                System.out.println(toDrawRadials);
+            }
+        }));
     }
 
     private void drawQuads(double x, double y, double width, double height) {
@@ -134,7 +144,7 @@ class Drawer {
                 drawLine(v, u);
             }
 
-            if (type == 3) {
+            if (type == 3 && toDrawRadials) {
                 drawCircles(v);
             }
         }
@@ -175,7 +185,7 @@ class Drawer {
 
         drawGraph(this.graph);
 
-        if (type == 5) {
+        if (type == 5 && toDrawRadials) {
             glLineWidth(1);
             drawCircles();
         }
