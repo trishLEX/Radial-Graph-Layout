@@ -14,8 +14,6 @@ import static java.lang.Math.sin;
 
 import static org.lwjgl.glfw.GLFW.*;
 import static org.lwjgl.opengl.GL11.*;
-import static org.lwjgl.opengl.GL11.GL_DEPTH_TEST;
-import static org.lwjgl.opengl.GL11.glEnable;
 
 class Drawer {
     private static final int NUMBER_OF_SIDES = 50;
