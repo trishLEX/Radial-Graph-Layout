@@ -4,6 +4,7 @@ import ru.bmstu.RadialGraph.Graph.Graph;
 import ru.bmstu.RadialGraph.Graph.Vertex;
 import ru.bmstu.RadialGraph.Visualization.GraphVisualization;
 
+import java.util.ArrayDeque;
 import java.util.ArrayList;
 
 public class Calculation {
@@ -18,14 +19,22 @@ public class Calculation {
         this.graph = graph;
     }
 
-    private void dfs(Vertex v) {
+    private void bfs(Vertex v) {
         v.setMark(1);
 
-        for (Vertex u: v.getChild()) {
-            if (u.getMark() == 0) {
-                u.setParent(v);         //устанавливаем родителя
-                u.getChild().remove(v); //удаляем ссылку на родителя
-                dfs(u);
+        ArrayDeque<Vertex> queue = new ArrayDeque<Vertex>();
+        queue.push(v);
+
+        while(!queue.isEmpty()) {
+            Vertex u = queue.poll();
+
+            for (Vertex w: u.getChild()) {
+                if (w.getMark() == 0) {
+                    w.setMark(1);
+                    w.setParent(u);
+                    //w.getChild().remove(u);
+                    queue.push(w);
+                }
             }
         }
     }
@@ -34,7 +43,7 @@ public class Calculation {
         v.setRoot(true);
         this.graph.setRoot(v);
 
-        dfs(v);
+        bfs(v);
 
         for (Vertex vertex: graph.getVertices()) {
             ArrayList<Vertex> temp = new ArrayList<>();
