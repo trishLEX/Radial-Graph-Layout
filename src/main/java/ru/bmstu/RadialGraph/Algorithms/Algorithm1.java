@@ -2,63 +2,9 @@ package ru.bmstu.RadialGraph.Algorithms;
 
 import ru.bmstu.RadialGraph.Graph.*;
 
-import java.util.ArrayDeque;
 import java.util.ArrayList;
-import java.util.Stack;
 
 class Algorithm1 {
-    public static class BreadthFirstPaths {
-        private boolean[] marked;
-        private Vertex[] edgeTo;
-        private int[] distTo;
-        private final Vertex start;
-
-        BreadthFirstPaths(Graph G, Vertex start) {
-            this.marked = new boolean[G.getVertices().size()];
-            this.edgeTo = new Vertex[G.getVertices().size()];
-            this.distTo = new int[G.getVertices().size()];
-            this.start = start;
-            bfs(G, this.start);
-        }
-
-        //TODO переписать код так, чтобы был учтен случай с несколькими родителями вершины.
-        private void bfs(Graph G, Vertex start) {
-            ArrayDeque<Vertex> queue = new ArrayDeque<>();
-            distTo[start.getIndex()] = 0;
-            marked[start.getIndex()] = true;
-            queue.add(start);
-            while (!queue.isEmpty()) {
-                Vertex v = queue.poll();
-                for (Vertex w: v.getChild())
-                    if (!marked[w.getIndex()]) {
-                        edgeTo[w.getIndex()] = v;
-                        distTo[w.getIndex()] = distTo[v.getIndex()] + 1;
-                        marked[w.getIndex()] = true;
-                        queue.add(w);
-                    }
-                Vertex w = v.getParent();
-                if (w != null && !marked[w.getIndex()]) {
-                    edgeTo[w.getIndex()] = v;
-                    distTo[w.getIndex()] = distTo[v.getIndex()] + 1;
-                    marked[w.getIndex()] = true;
-                    queue.add(w);
-                }
-            }
-        }
-
-        boolean hasPathTo(Vertex v) { return marked[v.getIndex()]; }
-
-        public Iterable<Vertex> pathTo(Vertex v) {
-            if (!hasPathTo(v)) return null;
-            Stack<Vertex> path = new Stack<Vertex>();
-            Vertex x;
-            for (x = v; distTo[x.getIndex()] != 0; x = edgeTo[x.getIndex()])
-                path.push(x);
-            path.push(x);
-            return path;
-        }
-    }
-
     private static double euclidianNorm(Vertex u, Vertex v) {
         return Math.sqrt(Math.pow((u.getX() - v.getX()), 2) + Math.pow((u.getY() - v.getY()), 2));
     }
@@ -76,59 +22,36 @@ class Algorithm1 {
     }
 
     private static int diam(Graph g) {
-        BreadthFirstPaths bfs = new BreadthFirstPaths(g, g.getVertices().get(0));
+        BreadthFirstSearch bfs = new BreadthFirstSearch(g, g.getVertices().get(0));
         int u = 0;
         int w = 0;
         for (int i = 0; i < g.getVertices().size(); i++)
-            if (bfs.distTo[i] > bfs.distTo[u])
+            if (bfs.getDistTo(i) > bfs.getDistTo(u))
                 u = i;
-        bfs = new BreadthFirstPaths(g, g.getVertices().get(u));
+        bfs = new BreadthFirstSearch(g, g.getVertices().get(u));
         for (int i = 0; i < g.getVertices().size(); i++)
-            if (bfs.distTo[i] > bfs.distTo[w])
+            if (bfs.getDistTo(i) > bfs.getDistTo(w))
                 w = i;
-        return bfs.distTo[w];
+        return bfs.getDistTo(w);
     }
 
-    private static int eccentricity(Graph g, Vertex v) {
-        BreadthFirstPaths bfs = new BreadthFirstPaths(g, v);
-        int max = bfs.distTo[0];
-        //System.out.println("max ecc = " + max + " " + v);
-        for (int i = 1; i < g.getVertices().size(); i++) {
-            //System.out.println("max = max(" + max + ", " + bfs.distTo[i] + ") " + i);
-            max = Math.max(max, bfs.distTo[i]);
-        }
-        return max;
-    }
-
-    private static int graphRadii(Graph g) {
-        int min = eccentricity(g, g.getVertices().get(0));
-        //System.out.println("min = " + min + " " + g.getVertices().get(0));
-        for (int i = 1; i < g.getVertices().size(); i++) {
-            min = Math.min(min, eccentricity(g, g.getVertices().get(i)));
-            //System.out.println(" min = " + min + " " + g.getVertices().get(i));
-        }
-        return min;
-    }
 
     private static ArrayList<Vertex> graphCenter(Graph g) {
         ArrayList<Vertex> center = new ArrayList<>();
-        int r = graphRadii(g);
+        int r = g.graphRadii();
         System.out.println("radii = " + r);
         for (Vertex v: g.getVertices()) {
-            if (eccentricity(g, v) == r)
+            if (g.eccentricity(v) == r)
                 center.add(v);
         }
         return center;
     }
 
     private static double degree(Graph g, Vertex v) {
-//        int degree = v.getChild().size();
-//        if (v.getParent() != null)
-//            degree += 1;
         double degree = 0;
-        BreadthFirstPaths bfs = new BreadthFirstPaths(g, v);
+        BreadthFirstSearch bfs = new BreadthFirstSearch(g, v);
         for (Vertex t: g.getVertices())
-            degree += bfs.distTo[t.getIndex()];
+            degree += bfs.getDistTo(t.getIndex());
         degree = 1 / degree;
         return degree;
     }
@@ -153,7 +76,6 @@ class Algorithm1 {
     }
 
     static void useAlgorithm(Graph graph) {
-        //BreadthFirstPaths bfs = new BreadthFirstPaths(graph, s);
         ArrayList<Vertex> center = graphCenter(graph);
         System.out.println("center = " + center.toString());
         int diam = diam(graph);
@@ -183,7 +105,7 @@ class Algorithm1 {
 //            for (Vertex u: graph.getVertices()) {
 //                for (Vertex v : graph.getVertices()) {
 //                    if (v != u) {
-//                        BreadthFirstPaths bfs = new BreadthFirstPaths(graph, v);
+//                        BreadthFirstSearch bfs = new BreadthFirstSearch(graph, v);
 //
 //                        //sum1x += graph.getW()[v.getIndex()][u.getIndex()] * (v.getX() + bfs.distTo[u.getIndex()] * (u.getX() - v.getX()) * b(u, v));
 //                        sum1x += ((v.getX() + euclidianNorm(v, u) * (u.getX() - v.getX()) * b(u, v)) / (float) euclidianNorm(v, u)) / (float) euclidianNorm(v, u);
@@ -221,8 +143,8 @@ class Algorithm1 {
                 double sum1x = 0;
                 for (Vertex u: graph.getVertices()) {
                     if (v != u) {
-                        BreadthFirstPaths bfs = new BreadthFirstPaths(graph, u);
-                        sum1x += (1 - t) * graph.getW()[u.getIndex()][v.getIndex()] * (u.getX() + bfs.distTo[v.getIndex()] * (v.getX() - u.getX()) * b(u, v));
+                        BreadthFirstSearch bfs = new BreadthFirstSearch(graph, u);
+                        sum1x += (1 - t) * graph.getW()[u.getIndex()][v.getIndex()] * (u.getX() + bfs.getDistTo(v.getIndex()) * (v.getX() - u.getX()) * b(u, v));
                         System.out.println("sum1x = " + sum1x + " v = " + v.getIndex() + " u = " + u.getIndex());
                     }
                 }
@@ -231,8 +153,8 @@ class Algorithm1 {
                 double sum1y = 0;
                 for (Vertex u: graph.getVertices()) {
                     if (v != u) {
-                        BreadthFirstPaths bfs = new BreadthFirstPaths(graph, u);
-                        sum1x += (1 - t) * graph.getW()[u.getIndex()][v.getIndex()] * (u.getY() + bfs.distTo[v.getIndex()] * (v.getY() - u.getY()) * b(u, v));
+                        BreadthFirstSearch bfs = new BreadthFirstSearch(graph, u);
+                        sum1x += (1 - t) * graph.getW()[u.getIndex()][v.getIndex()] * (u.getY() + bfs.getDistTo(v.getIndex()) * (v.getY() - u.getY()) * b(u, v));
                         System.out.println("sum1y = " + sum1y + " v = " + v.getIndex() + " u = " + u.getIndex());
                     }
                 }

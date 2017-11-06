@@ -4,7 +4,6 @@ import ru.bmstu.RadialGraph.Graph.Graph;
 import ru.bmstu.RadialGraph.Graph.Vertex;
 import ru.bmstu.RadialGraph.Visualization.GraphVisualization;
 
-import java.util.ArrayDeque;
 import java.util.ArrayList;
 
 public class Calculation {
@@ -19,54 +18,19 @@ public class Calculation {
         this.graph = graph;
     }
 
-    private void bfs(Vertex v) {
-        v.setMark(1);
-
-        ArrayDeque<Vertex> queue = new ArrayDeque<Vertex>();
-        queue.push(v);
-
-        while(!queue.isEmpty()) {
-            Vertex u = queue.poll();
-
-            for (Vertex w: u.getChild()) {
-                if (w.getMark() == 0) {
-                    w.setMark(1);
-                    w.setParent(u);
-                    //w.getChild().remove(u);
-                    queue.push(w);
-                }
-            }
-        }
-    }
-
-    private void makeTree(Vertex v) {
-        v.setRoot(true);
-        this.graph.setRoot(v);
-
-        bfs(v);
-
-        for (Vertex vertex: graph.getVertices()) {
-            ArrayList<Vertex> temp = new ArrayList<>();
-            for (Vertex u: vertex.getChild()) {
-                if (u.getParent() == vertex) {
-                    temp.add(u);
-                }
-            }
-            vertex.setChild(temp);
-        }
-    }
-
     public Graph calculateGraph(int type) {
         this.type = type;
 
         if (type == 3) {
-            makeTree(graph.get(START_INDEX));
+            //graph.makeTree(graph.get(START_INDEX));
+            graph.makeTree(graph.getCenter().get(0));
             System.out.println("Tree is built");
             Algorithm3.useAlgorithm(graph);
         }
 
         if (type == 5) {
-            makeTree(graph.get(START_INDEX));
+            //graph.makeTree(graph.get(START_INDEX));
+            graph.makeTree(graph.getCenter().get(0));
             System.out.println("Tree is built");
             Algorithm5.useAlgorithm(graph);
         }
@@ -74,7 +38,7 @@ public class Calculation {
         System.out.println(graph);
 
         if (type == 1) {
-            makeTree(graph.get(START_INDEX));
+            graph.makeTree(graph.get(START_INDEX));
             Algorithm5.useAlgorithm(graph);
             Algorithm1.useAlgorithm(graph);
         }

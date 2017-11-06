@@ -1,5 +1,6 @@
 package ru.bmstu.RadialGraph.Graph;
 
+import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Scanner;
 
@@ -159,5 +160,71 @@ public class Graph {
 
     public void setRoot(Vertex root) {
         this.root = root;
+    }
+
+    private void bfs(Vertex v) {
+        v.setMark(1);
+
+        ArrayDeque<Vertex> queue = new ArrayDeque<>();
+        queue.push(v);
+
+        while(!queue.isEmpty()) {
+            Vertex u = queue.poll();
+
+            for (Vertex w: u.getChild()) {
+                if (w.getMark() == 0) {
+                    w.setMark(1);
+                    w.setParent(u);
+                    //w.getChild().remove(u);
+                    queue.push(w);
+                }
+            }
+        }
+    }
+
+
+    public void makeTree(Vertex v) {
+        v.setRoot(true);
+        this.root = v;
+
+        bfs(v);
+
+        for (Vertex vertex: vertices) {
+            ArrayList<Vertex> temp = new ArrayList<>();
+            for (Vertex u: vertex.getChild()) {
+                if (u.getParent() == vertex) {
+                    temp.add(u);
+                }
+            }
+            vertex.setChild(temp);
+        }
+    }
+
+    public int eccentricity(Vertex v) {
+        BreadthFirstSearch bfs = new BreadthFirstSearch(this, v);
+        int max = bfs.getDistTo(0);
+        for (int i = 1; i < vertices.size(); i++) {
+            max = Math.max(max, bfs.getDistTo(i));
+        }
+        return max;
+    }
+
+    public int graphRadii() {
+        int min = eccentricity(vertices.get(0));
+        for (int i = 1; i < vertices.size(); i++) {
+            min = Math.min(min, eccentricity(vertices.get(i)));
+        }
+        return min;
+    }
+
+    public ArrayList<Vertex> getCenter() {
+        ArrayList<Vertex> center = new ArrayList<>();
+        int r = graphRadii();
+        System.out.println("radii = " + r);
+        for (Vertex v: vertices) {
+            if (eccentricity(v) == r)
+                center.add(v);
+        }
+        return center;
     }
 }
