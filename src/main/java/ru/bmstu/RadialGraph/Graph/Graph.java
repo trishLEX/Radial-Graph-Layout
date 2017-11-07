@@ -12,6 +12,7 @@ public class Graph {
     private double VertexR;
     private ArrayList<Double> radials;
     private ArrayList<ArrayList<Vertex>> verticesByDepth;
+    private ArrayList<Vertex[]> deleted;
     private Vertex root;
     private int maxDepth;
 
@@ -34,6 +35,7 @@ public class Graph {
         this.maxDepth = 0;
         this.verticesByDepth = new ArrayList<>();
         this.root = null;
+        this.deleted = new ArrayList<>();
 
         this.w = new double[count][count];
     }
@@ -175,7 +177,7 @@ public class Graph {
                 if (w.getMark() == 0) {
                     w.setMark(1);
                     w.setParent(u);
-                    //w.getChild().remove(u);
+                    w.getChild().remove(u);
                     queue.push(w);
                 }
             }
@@ -189,15 +191,33 @@ public class Graph {
 
         bfs(v);
 
+        ArrayList<Vertex[]> deleted = new ArrayList<>();
+
         for (Vertex vertex: vertices) {
             ArrayList<Vertex> temp = new ArrayList<>();
             for (Vertex u: vertex.getChild()) {
                 if (u.getParent() == vertex) {
                     temp.add(u);
                 }
+                else {
+                    Vertex[] delcon = new Vertex[] {vertex, u};
+                    if (!contains(deleted, delcon))
+                        deleted.add(delcon);
+                }
             }
             vertex.setChild(temp);
         }
+
+        this.deleted = deleted;
+    }
+
+    private boolean contains(ArrayList<Vertex[]> deleted, Vertex[] delconn) {
+        for (Vertex[] conn: deleted){
+            if ((conn[0] == delconn[0] && conn[1] == delconn[1]) || (conn[0] == delconn[1] && conn[1] == delconn[0]))
+                return true;
+        }
+
+        return false;
     }
 
     public int eccentricity(Vertex v) {
@@ -226,5 +246,9 @@ public class Graph {
                 center.add(v);
         }
         return center;
+    }
+
+    public ArrayList<Vertex[]> getDeleted() {
+        return deleted;
     }
 }

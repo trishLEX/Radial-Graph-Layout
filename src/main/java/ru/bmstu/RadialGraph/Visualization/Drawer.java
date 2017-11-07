@@ -34,6 +34,7 @@ class Drawer {
     private int type;
 
     private boolean toDrawRadials = true;
+    private boolean toDrawDeleted = false;
 
     private void background() {
         glClearColor(1, 1, 1, 0);
@@ -64,7 +65,9 @@ class Drawer {
         glfwSetKeyCallback(window, GLFWKeyCallback.create((window, key, scancode, action, mods) -> {
             if (key == GLFW_KEY_R && action == GLFW_PRESS) {
                 toDrawRadials = !toDrawRadials;
-                System.out.println(toDrawRadials);
+            }
+            else if (key == GLFW_KEY_D && action == GLFW_PRESS) {
+                toDrawDeleted = !toDrawDeleted;
             }
         }));
     }
@@ -144,6 +147,12 @@ class Drawer {
 
             if (type == 3 && toDrawRadials) {
                 drawCircles(v);
+            }
+        }
+
+        if (toDrawDeleted) {
+            for (Vertex[] delconn: graph.getDeleted()) {
+                drawLine(delconn[0], delconn[1]);
             }
         }
     }
