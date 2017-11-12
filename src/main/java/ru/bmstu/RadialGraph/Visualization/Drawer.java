@@ -151,8 +151,8 @@ class Drawer {
         }
 
         if (toDrawDeleted) {
-            for (Vertex[] delconn: graph.getDeleted()) {
-                drawLine(delconn[0], delconn[1]);
+            for (Vertex[] deletedConnection: graph.getDeleted()) {
+                drawLine(deletedConnection[0], deletedConnection[1]);
             }
         }
     }

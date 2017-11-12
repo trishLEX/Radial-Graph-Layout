@@ -4,13 +4,10 @@ import ru.bmstu.RadialGraph.Graph.Graph;
 import ru.bmstu.RadialGraph.Graph.Vertex;
 import ru.bmstu.RadialGraph.Visualization.GraphVisualization;
 
-import java.util.ArrayList;
-
-public class Calculation {
+final public class Calculation {
     private static final int START_INDEX = 0;
 
     private Graph graph;
-    private int type;
     public static int WIDTH = GraphVisualization.WIDTH;
     public static int HEIGHT = GraphVisualization.HEIGHT;
 
@@ -19,8 +16,6 @@ public class Calculation {
     }
 
     public Graph calculateGraph(int type) {
-        this.type = type;
-
         if (type == 3) {
             //graph.makeTree(graph.get(START_INDEX));
             graph.makeTree(graph.getCenter().get(0));

@@ -6,7 +6,7 @@ import java.util.ArrayList;
 
 import static ru.bmstu.RadialGraph.Graph.Vertex.isIntersect;
 
-class Algorithm3 {
+final class Algorithm3 {
     private static final double R = 100;
     private static final double PHI = Math.PI;
     private static final double R_OFFSET = Graph.R_OFFSET;

@@ -200,9 +200,9 @@ public class Graph {
                     temp.add(u);
                 }
                 else {
-                    Vertex[] delcon = new Vertex[] {vertex, u};
-                    if (!contains(deleted, delcon))
-                        deleted.add(delcon);
+                    Vertex[] deletedConnection = new Vertex[] {vertex, u};
+                    if (!contains(deleted, deletedConnection))
+                        deleted.add(deletedConnection);
                 }
             }
             vertex.setChild(temp);
@@ -212,8 +212,8 @@ public class Graph {
     }
 
     private boolean contains(ArrayList<Vertex[]> deleted, Vertex[] delconn) {
-        for (Vertex[] conn: deleted){
-            if ((conn[0] == delconn[0] && conn[1] == delconn[1]) || (conn[0] == delconn[1] && conn[1] == delconn[0]))
+        for (Vertex[] connection: deleted){
+            if ((connection[0] == delconn[0] && connection[1] == delconn[1]) || (connection[0] == delconn[1] && connection[1] == delconn[0]))
                 return true;
         }
 

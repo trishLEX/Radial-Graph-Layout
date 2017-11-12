@@ -4,7 +4,7 @@ import ru.bmstu.RadialGraph.Graph.*;
 
 import java.util.ArrayList;
 
-class Algorithm1 {
+final class Algorithm1 {
     private static double euclidianNorm(Vertex u, Vertex v) {
         return Math.sqrt(Math.pow((u.getX() - v.getX()), 2) + Math.pow((u.getY() - v.getY()), 2));
     }

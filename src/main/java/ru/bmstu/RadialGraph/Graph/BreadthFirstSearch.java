@@ -2,7 +2,7 @@ package ru.bmstu.RadialGraph.Graph;
 
 import java.util.ArrayDeque;
 
-public class BreadthFirstSearch {
+public final class BreadthFirstSearch {
     private boolean[] marked;
     private Vertex[] edgeTo;
     private int[] distTo;

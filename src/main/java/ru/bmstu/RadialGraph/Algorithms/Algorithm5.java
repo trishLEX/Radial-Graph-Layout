@@ -7,7 +7,7 @@ import java.util.ArrayList;
 
 import static ru.bmstu.RadialGraph.Graph.Vertex.isIntersect;
 
-class Algorithm5 {
+final class Algorithm5 {
     private static double R;
     private static final int WIDTH = GraphVisualization.WIDTH;
     private static final int HEIGHT = GraphVisualization.HEIGHT;
