@@ -3,7 +3,7 @@ package ru.bmstu.RadialGraph.Graph;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Scanner;
-
+//TODO добавить поле размер
 public class Graph {
     private final double VERTEX_R = 0.015;
     public static final double R_OFFSET = 1.0;
@@ -15,6 +15,9 @@ public class Graph {
     private ArrayList<Vertex[]> deleted;
     private Vertex root;
     private int maxDepth;
+    private ArrayList<Vertex> center;
+    private int radii;
+    private int diam;
 
     private double[][] w;
 
@@ -209,6 +212,8 @@ public class Graph {
         }
 
         this.deleted = deleted;
+
+        this.calculateCenter();
     }
 
     private boolean contains(ArrayList<Vertex[]> deleted, Vertex[] delconn) {
@@ -220,7 +225,7 @@ public class Graph {
         return false;
     }
 
-    public int eccentricity(Vertex v) {
+    private int eccentricity(Vertex v) {
         BreadthFirstSearch bfs = new BreadthFirstSearch(this, v);
         int max = bfs.getDistTo(0);
         for (int i = 1; i < vertices.size(); i++) {
@@ -229,26 +234,41 @@ public class Graph {
         return max;
     }
 
-    public int graphRadii() {
+    private void graphRadii() {
         int min = eccentricity(vertices.get(0));
+        int max = min;
         for (int i = 1; i < vertices.size(); i++) {
             min = Math.min(min, eccentricity(vertices.get(i)));
+            max = Math.max(max, eccentricity(vertices.get(i)));
         }
-        return min;
+        this.diam = max;
+        this.radii = min;
     }
 
-    public ArrayList<Vertex> getCenter() {
+    private void calculateCenter() {
         ArrayList<Vertex> center = new ArrayList<>();
-        int r = graphRadii();
-        System.out.println("radii = " + r);
+        graphRadii();
+        System.out.println("radii = " + radii);
         for (Vertex v: vertices) {
-            if (eccentricity(v) == r)
+            if (eccentricity(v) == radii)
                 center.add(v);
         }
-        return center;
+        this.center = center;
     }
 
     public ArrayList<Vertex[]> getDeleted() {
         return deleted;
+    }
+
+    public int getRadii() {
+        return radii;
+    }
+
+    public int getDiam() {
+        return diam;
+    }
+
+    public ArrayList<Vertex> getCenter() {
+        return this.center;
     }
 }

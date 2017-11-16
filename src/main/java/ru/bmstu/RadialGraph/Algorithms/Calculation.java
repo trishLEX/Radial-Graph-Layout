@@ -30,13 +30,15 @@ final public class Calculation {
             Algorithm5.useAlgorithm(graph);
         }
 
-        System.out.println(graph);
-
         if (type == 1) {
             graph.makeTree(graph.get(START_INDEX));
             Algorithm5.useAlgorithm(graph);
             Algorithm1.useAlgorithm(graph);
         }
+
+        System.out.println(graph);
+
+        System.out.println("RADIALS " + graph.getRadials());
 
         for (Vertex v: graph.getVertices()) {
             System.out.println("COORDINATES " + v.getIndex() + " (" + v.getX() + "," + v.getY() + ") w = " + v.getWidth() + " h = " + v.getHeight());
