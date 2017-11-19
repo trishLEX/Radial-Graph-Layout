@@ -31,7 +31,8 @@ final public class Calculation {
         }
 
         if (type == 1) {
-            graph.makeTree(graph.get(START_INDEX));
+            //graph.makeTree(graph.get(START_INDEX));
+            graph.makeTree(graph.getCenter().get(0));
             Algorithm5.useAlgorithm(graph);
             Algorithm1.useAlgorithm(graph);
         }

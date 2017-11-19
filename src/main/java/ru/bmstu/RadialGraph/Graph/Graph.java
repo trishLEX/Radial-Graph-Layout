@@ -3,12 +3,13 @@ package ru.bmstu.RadialGraph.Graph;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Scanner;
-//TODO добавить поле размер
+//TODO сделать метод получние всех вершин без определённой
 public class Graph {
     private final double VERTEX_R = 0.015;
     public static final double R_OFFSET = 1.0;
 
     private ArrayList<Vertex> vertices;
+    private int size;
     private double VertexR;
     private ArrayList<Double> radials;
     private ArrayList<ArrayList<Vertex>> verticesByDepth;
@@ -27,6 +28,7 @@ public class Graph {
 
     public Graph(int count) {
         this.vertices = new ArrayList<>();
+        this.size = count;
 
         for (int i = 0; i < count; i++) {
             vertices.add(new Vertex(i));
@@ -78,6 +80,8 @@ public class Graph {
             vertices.get(y).getChild().add(vertices.get(x));
             w[x][y] = w[y][x] = 1.0;
         }
+
+        this.calculateCenter();
     }
 
     @Override
@@ -212,8 +216,6 @@ public class Graph {
         }
 
         this.deleted = deleted;
-
-        this.calculateCenter();
     }
 
     private boolean contains(ArrayList<Vertex[]> deleted, Vertex[] delconn) {
@@ -270,5 +272,9 @@ public class Graph {
 
     public ArrayList<Vertex> getCenter() {
         return this.center;
+    }
+
+    public int getSize() {
+        return size;
     }
 }

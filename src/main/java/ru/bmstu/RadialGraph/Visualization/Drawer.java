@@ -192,7 +192,7 @@ class Drawer {
 
         drawGraph(this.graph);
 
-        if ((type == 5 || type == 1) && toDrawRadials) {
+        if ((type == 5) && toDrawRadials) {
             glLineWidth(1);
             drawCircles();
         }
