@@ -121,7 +121,7 @@ public class Graph {
         this.getRadials().clear();
 
         for (int i = 0; i <= this.maxDepth; i++) {
-            this.radials.add(this.getVerticesByDepth(i).get(0).getR());
+            this.radials.add(root.distTo(this.verticesByDepth.get(i).get(0)));
         }
     }
 

@@ -5,16 +5,12 @@ import ru.bmstu.RadialGraph.Graph.*;
 import java.util.ArrayList;
 
 final class Algorithm1 {
-    private static double euclideanNorm(Vertex u, Vertex v) {
-        return Math.sqrt(Math.pow((u.getX() - v.getX()), 2) + Math.pow((u.getY() - v.getY()), 2));
-    }
-
     private static double euclideanNorm(Vertex v) {
         return Math.sqrt(Math.pow(v.getX(), 2) + Math.pow(v.getY(), 2));
     }
 
     private static double b(Vertex u, Vertex v) {
-        double norm = euclideanNorm(u, v);
+        double norm = v.distTo(u);
         if (norm > 0)
             return 1 / norm;
         else
@@ -183,7 +179,7 @@ final class Algorithm1 {
 
         System.out.println(Z);
 
-        double K = 50.0;
+        double K = 10000.0;
         for (double t = 0.0; t <= 1; t += 1 / K) {
             for (Vertex u: graph.getVertices()) {
                 double sum2 = 0.0;
@@ -289,9 +285,6 @@ final class Algorithm1 {
         //centralityDrawing(graph, coords);
         focusingOnNode(graph, coords);
 
-        ArrayList<Double> radials = new ArrayList<>();
-        for (Vertex v: graph.getVertices())
-            if (!radials.contains(v.getR()))
-                radials.add(v.getR());
+        graph.fillRadials5();
     }
 }
