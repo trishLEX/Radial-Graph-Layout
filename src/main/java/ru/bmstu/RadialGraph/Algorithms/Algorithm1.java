@@ -6,6 +6,7 @@ import java.util.ArrayList;
 
 final class Algorithm1 {
     private static final int LENGTH_OF_EDGE = 100;
+    private static final int NUMBER_OF_ITERATIONS = 1000;
 
     private static double euclideanNorm(Vertex v) {
         return Math.sqrt(Math.pow(v.getX(), 2) + Math.pow(v.getY(), 2));
@@ -60,8 +61,6 @@ final class Algorithm1 {
             }
         }
 
-        System.out.println(D);
-
         for (int i = 0; i < graph.getSize(); i++) {
             for (int j = 0; j < graph.getSize(); j++) {
                 double d = D.get(i, j) != 0? (1 / D.get(i, j) / D.get(i, j)) : 0;
@@ -69,18 +68,13 @@ final class Algorithm1 {
             }
         }
 
-        System.out.println(W);
-
         int rootIndex = graph.getRoot().getIndex();
         for (int i = 0; i < graph.getSize(); i++) {
             Z.set(i, rootIndex, W.get(i, rootIndex));
             Z.set(rootIndex, i, W.get(rootIndex, i));
         }
 
-        System.out.println(Z);
-
-        double K = 1000.0;
-        for (double t = 0.0; t <= 1; t += 1 / K) {
+        for (double t = 0.0; t <= 1; t += 1 / NUMBER_OF_ITERATIONS) {
             for (Vertex u: graph.getVertices()) {
                 double sum2 =  0.0;
                 double sum1x = 0.0;
@@ -129,6 +123,8 @@ final class Algorithm1 {
         ArrayList<double[]> coords = memorizeCoords(graph);
 
         focusingOnNode(graph, coords);
+
+        System.out.println("Centrality drawing is prepared");
 
         graph.fillRadials5();
     }

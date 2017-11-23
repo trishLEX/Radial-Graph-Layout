@@ -133,6 +133,8 @@ final class Algorithm5 {
 
         deleteIntersections(tree);
 
+        System.out.println("Intersections are deleted");
+
         tree.fillRadials5();
     }
 }
