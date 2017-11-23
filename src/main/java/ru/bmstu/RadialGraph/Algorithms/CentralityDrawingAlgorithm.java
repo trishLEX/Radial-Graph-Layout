@@ -1,140 +1,102 @@
 package ru.bmstu.RadialGraph.Algorithms;
 
+import ru.bmstu.RadialGraph.Calculation.BreadthFirstSearch;
+import ru.bmstu.RadialGraph.Calculation.Matrix;
 import ru.bmstu.RadialGraph.Graph.*;
-import ru.bmstu.RadialGraph.Visualization.GraphVisualization;
 
 import java.util.ArrayList;
 
-import static ru.bmstu.RadialGraph.Graph.Vertex.isIntersect;
-
 public final class CentralityDrawingAlgorithm {
-    private static double R;
-    private static final int WIDTH = GraphVisualization.WIDTH;
-    private static final int HEIGHT = GraphVisualization.HEIGHT;
-    private static final double RADIAL_COEFFICIENT = 0.9;
-    private static final double R_OFFSET = Graph.R_OFFSET;
+    private static final int LENGTH_OF_EDGE = 100;
+    private static final int NUMBER_OF_ITERATIONS = 10000;
 
-    private static void deleteIntersections(Graph tree) {
-        for (Vertex v: tree.getVertices()) {
-            ArrayList<Vertex> currentDepthWithoutV = new ArrayList<Vertex>();
-            currentDepthWithoutV.addAll(tree.getVerticesByDepth(v.getDepth()));
-            currentDepthWithoutV.remove(v);
-
-            makeRadialOffsetWithoutIntersections(v, currentDepthWithoutV, tree);
-
-            if (v.getDepth() != tree.getMaxDepth())
-                makeRadialOffsetWithoutIntersections(v, tree.getVerticesByDepth(v.getDepth() + 1), tree);
-        }
+    private static double b(Vertex u, Vertex v) {
+        double norm = v.distTo(u);
+        if (norm > 0)
+            return 1 / norm;
+        else
+            return 0;
     }
 
-    private static void makeRadialOffsetWithoutIntersections(Vertex v, ArrayList<Vertex> vertices, Graph tree) {
-        double offset = 0.0;
+    private static void focusingOnNode(Graph graph, ArrayList<double[]> coords) {
+        Matrix D = new Matrix(graph.getSize());
+        Matrix W = new Matrix(graph.getSize());
+        Matrix Z = new Matrix(graph.getSize());
 
-        boolean wasIntersection = false;
-
-        for (Vertex u: vertices) {
-            while (isIntersect(v, u)) {
-                wasIntersection = true;
-                offset += R_OFFSET;
-                u.setVertexByPolar(u.getR() + R_OFFSET, u.getAngle());
-
-                if (u.getDepth() == v.getDepth())
-                    v.setVertexByPolar(v.getR() + R_OFFSET, v.getAngle());
+        for (Vertex v: graph.getVertices()) {
+            BreadthFirstSearch bfs = new BreadthFirstSearch(graph, v);
+            for (Vertex u: graph.getVertices()) {
+                D.set(v.getIndex(), u.getIndex(), bfs.getDistTo(u.getIndex()) * LENGTH_OF_EDGE);
+                D.set(u.getIndex(), v.getIndex(), bfs.getDistTo(u.getIndex()) * LENGTH_OF_EDGE);
             }
+        }
 
-            if (wasIntersection) {
-                for (Vertex w: vertices) {
-                    if (w != u) {
-                        w.setVertexByPolar(w.getR() + offset, w.getAngle());
+        for (int i = 0; i < graph.getSize(); i++) {
+            for (int j = 0; j < graph.getSize(); j++) {
+                double d = D.get(i, j) != 0? (1 / D.get(i, j) / D.get(i, j)) : 0;
+                W.set(i, j, d);
+            }
+        }
+
+        int rootIndex = graph.getRoot().getIndex();
+        for (int i = 0; i < graph.getSize(); i++) {
+            Z.set(i, rootIndex, W.get(i, rootIndex));
+            Z.set(rootIndex, i, W.get(rootIndex, i));
+        }
+
+        for (double t = 0.0; t <= 1; t += (double) 1 / NUMBER_OF_ITERATIONS) {
+            for (Vertex u: graph.getVertices()) {
+                double sum2 =  0.0;
+                double sum1x = 0.0;
+                double sum1y = 0.0;
+
+                for (Vertex v: graph.getVertices()) {
+                    if (v != u) {
+                        sum2 += (1 - t) * W.get(u.getIndex(), v.getIndex()) + t * Z.get(u.getIndex(), v.getIndex());
+
+                        sum1x += ((1 - t) * W.get(u.getIndex(), v.getIndex()) + t * Z.get(u.getIndex(), v.getIndex())) *
+                                (coords.get(v.getIndex())[0] + D.get(u.getIndex(), v.getIndex()) * (coords.get(u.getIndex())[0] - coords.get(v.getIndex())[0]) * b(u, v));
+
+                        sum1y += ((1 - t) * W.get(u.getIndex(), v.getIndex()) + t * Z.get(u.getIndex(), v.getIndex())) *
+                                (coords.get(v.getIndex())[1] + D.get(u.getIndex(), v.getIndex()) * (coords.get(u.getIndex())[1] - coords.get(v.getIndex())[1]) * b(u, v));
                     }
                 }
 
-                for (int i = u.getDepth() + 1; i <= tree.getMaxDepth(); i++)
-                    for (Vertex q: tree.getVerticesByDepth(i))
-                        q.setVertexByPolar(q.getR() + offset, q.getAngle());
+                u.setVertexByCartesian(sum1x / sum2, sum1y / sum2);
             }
 
-            wasIntersection = false;
-            offset = 0.0;
+            for (Vertex v: graph.getVertices()){
+                double[] coord = new double[2];
+                coord[0] = v.getX();
+                coord[1] = v.getY();
+                coords.set(v.getIndex(), coord);
+            }
         }
     }
 
-    private static void addFirstRadii(Graph tree) {
-        R = (WIDTH < HEIGHT? WIDTH : HEIGHT)/ tree.getMaxDepth() / 2 * RADIAL_COEFFICIENT; //раньше радиус был константный
-        //R = 50.0;
-        //tree.getRadials().add(R);
-    }
+    private static ArrayList<double[]> memorizeCoords(Graph graph) {
+        ArrayList<double[]> coords = new ArrayList<>();
 
-    private static int leavesCount = 0;
-    private static int leavesCounter(Vertex root) {
-        countLeaves(root);
-        return leavesCount;
-    }
-
-    private static void countLeaves(Vertex root) {
-        if (root.getChild().size() != 0) {
-            for (Vertex v: root.getChild())
-                countLeaves(v);
-        }
-        else
-            leavesCount++;
-    }
-
-    private static void radialPositions(Graph T, Vertex v, double alpha, double beta){
-        if (v.isRoot()) {
-            v.setX(0);
-            v.setY(0);
-
-            v.setR(0);
-            v.setAngle(0);
+        for (Vertex v: graph.getVertices()) {
+            double[] coord = new double[2];
+            coord[0] = v.getX();
+            coord[1] = v.getY();
+            coords.add(coord);
         }
 
-        int D = v.getDepth();
-
-        double theta = alpha;
-
-        double R_D = R + (R * D);
-
-        if (!T.getRadials().contains(R_D))
-            T.getRadials().add(R_D);
-
-        int k = leavesCounter(v);
-        leavesCount = 0;
-
-        for (Vertex c: v.getChild()) {
-            int lambda = leavesCounter(c);
-            leavesCount = 0;
-
-            double mu = theta + ((beta - alpha) * lambda / k);
-
-            c.setVertexByPolar(R_D, (theta + mu) / 2);
-
-            if (c.getChild().size() > 0)
-                radialPositions(T, c, theta, mu);
-
-            theta = mu;
-        }
+        return coords;
     }
 
-    public static void useAlgorithm(Graph tree) {
-        Vertex root = tree.getRoot();
+    public static void useAlgorithm(Graph graph) {
+        System.out.println("Graph is:");
+        System.out.println(graph);
 
-        System.out.println("Root is found");
+        ArrayList<double[]> coords = memorizeCoords(graph);
 
-        tree.calculateMaxDepth(root);
+        focusingOnNode(graph, coords);
 
-        System.out.println("Max depth found");
+        System.out.println("Centrality drawing is prepared");
 
-        addFirstRadii(tree);
-
-        radialPositions(tree, root, 0, 2 * Math.PI);
-
-        System.out.println("Positions are calculated");
-
-        deleteIntersections(tree);
-
-        System.out.println("Intersections are deleted");
-
-        tree.fillRadials5();
+        graph.fillRadials5();
     }
 }

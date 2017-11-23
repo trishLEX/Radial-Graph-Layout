@@ -1,7 +1,7 @@
 package ru.bmstu.RadialGraph.Calculation;
 
-import ru.bmstu.RadialGraph.Algorithms.CentralityDrawingAlgorithm;
 import ru.bmstu.RadialGraph.Algorithms.ConcentricCirclesAlgorithm;
+import ru.bmstu.RadialGraph.Algorithms.CentralityDrawingAlgorithm;
 import ru.bmstu.RadialGraph.Algorithms.ParentCenteredAlgorithm;
 import ru.bmstu.RadialGraph.Graph.Graph;
 import ru.bmstu.RadialGraph.Graph.Vertex;
@@ -30,14 +30,14 @@ final public class Calculation {
             //graph.makeTree(graph.get(START_INDEX));
             graph.makeTree(graph.getCenter().get(0));
             System.out.println("Tree is built");
-            CentralityDrawingAlgorithm.useAlgorithm(graph);
+            ConcentricCirclesAlgorithm.useAlgorithm(graph);
         }
 
         if (type == 1) {
             //graph.makeTree(graph.get(START_INDEX));
             graph.makeTree(graph.getCenter().get(0));
             ParentCenteredAlgorithm.useAlgorithm(graph);
-            ConcentricCirclesAlgorithm.useAlgorithm(graph);
+            CentralityDrawingAlgorithm.useAlgorithm(graph);
         }
 
         System.out.println(graph);
