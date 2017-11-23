@@ -108,7 +108,6 @@ final class Algorithm3 {
 
         for (Vertex v: tree.getVertices()){
             for (Vertex u: tree.getVertices()) {
-                //System.out.println("v = " + v.getIndex() + " u = " + u.getIndex() + " isIntersect? " + isIntersect(v, u));
                 if (v != u && isIntersect(v, u)) {
                     makeRadialOffsetWithoutIntersections(v, u);
                 }
@@ -146,7 +145,6 @@ final class Algorithm3 {
 
         while (isIntersect(v, u)) {
             for (Vertex w: vP.getChild()) {
-                System.out.println(" w = " + w.getIndex());
                 offset += R_OFFSET;
                 w.moveFromParent(R_OFFSET);
             }
