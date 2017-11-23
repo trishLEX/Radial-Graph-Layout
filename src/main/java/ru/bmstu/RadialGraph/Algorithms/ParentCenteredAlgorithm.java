@@ -72,7 +72,9 @@ public final class ParentCenteredAlgorithm {
 
                         if (v.getParent().getParent().getChild().size() == 1) {
                             v.setR(v.getParent().getR()); //здесь было R / 2
-                        } else {
+                        }
+
+                        else {
                             Vertex sibling = findNearestSibling(v.getParent());
 
                             double delta = makeInFirstQuarter(v.getParent().getAngle() - sibling.getAngle()) / 2;

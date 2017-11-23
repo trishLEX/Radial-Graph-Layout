@@ -7,12 +7,10 @@ import java.util.ArrayList;
 import java.util.Scanner;
 //TODO сделать метод получние всех вершин без определённой
 public class Graph {
-    private final double VERTEX_R = 0.015;
     public static final double R_OFFSET = 1.0;
 
     private ArrayList<Vertex> vertices;
     private int size;
-    private double VertexR;
     private ArrayList<Double> radials;
     private ArrayList<ArrayList<Vertex>> verticesByDepth;
     private ArrayList<Vertex[]> deleted;
@@ -20,9 +18,6 @@ public class Graph {
     private int maxDepth;
     private ArrayList<Vertex> center;
     private int radii;
-    private int diam;
-
-    private double[][] w;
 
     public int getMaxDepth() {
         return maxDepth;
@@ -36,39 +31,19 @@ public class Graph {
             vertices.add(new Vertex(i));
         }
 
-        this.VertexR = VERTEX_R;
-
         this.radials = new ArrayList<>();
         this.maxDepth = 0;
         this.verticesByDepth = new ArrayList<>();
         this.root = null;
         this.deleted = new ArrayList<>();
-
-        this.w = new double[count][count];
     }
 
     public ArrayList<Vertex> getVertices() {
         return vertices;
     }
 
-    public void setVertices(ArrayList<Vertex> vertices) {
-        this.vertices = vertices;
-    }
-
-    public double getVertexR() {
-        return VertexR;
-    }
-
-    public void setVertexR(double vertexR) {
-        this.VertexR = vertexR;
-    }
-
     public Vertex get(int i) {
         return this.vertices.get(i);
-    }
-
-    public double[][] getW() {
-        return w;
     }
 
     public void scanGraph(Scanner in) {
@@ -80,7 +55,6 @@ public class Graph {
 
             vertices.get(x).getChild().add(vertices.get(y));
             vertices.get(y).getChild().add(vertices.get(x));
-            w[x][y] = w[y][x] = 1.0;
         }
 
         this.calculateCenter();
@@ -102,10 +76,6 @@ public class Graph {
 
     public ArrayList<Double> getRadials() {
         return radials;
-    }
-
-    public void setRadials(ArrayList<Double> radials) {
-        this.radials = radials;
     }
 
     public void fillRadials3() {
@@ -161,16 +131,8 @@ public class Graph {
         return this.verticesByDepth.get(depth);
     }
 
-    public void setVerticesByDepth(ArrayList<ArrayList<Vertex>> verticesByDepth) {
-        this.verticesByDepth = verticesByDepth;
-    }
-
     public Vertex getRoot() {
         return root;
-    }
-
-    public void setRoot(Vertex root) {
-        this.root = root;
     }
 
     private void bfs(Vertex v) {
@@ -240,12 +202,10 @@ public class Graph {
 
     private void graphRadii() {
         int min = eccentricity(vertices.get(0));
-        int max = min;
         for (int i = 1; i < vertices.size(); i++) {
             min = Math.min(min, eccentricity(vertices.get(i)));
-            max = Math.max(max, eccentricity(vertices.get(i)));
         }
-        this.diam = max;
+
         this.radii = min;
     }
 
@@ -262,14 +222,6 @@ public class Graph {
 
     public ArrayList<Vertex[]> getDeleted() {
         return deleted;
-    }
-
-    public int getRadii() {
-        return radii;
-    }
-
-    public int getDiam() {
-        return diam;
     }
 
     public ArrayList<Vertex> getCenter() {
