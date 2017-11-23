@@ -17,10 +17,6 @@ public class Matrix {
         return this.matrix[i][j];
     }
 
-    public void setRow(int i, double[] row) {
-        this.matrix[i] = row;
-    }
-
     @Override
     public String toString() {
         String res = "";
