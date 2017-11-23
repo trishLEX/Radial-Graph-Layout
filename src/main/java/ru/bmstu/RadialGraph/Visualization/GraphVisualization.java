@@ -1,6 +1,6 @@
 package ru.bmstu.RadialGraph.Visualization;
 
-import ru.bmstu.RadialGraph.Algorithms.Calculation;
+import ru.bmstu.RadialGraph.Calculation.Calculation;
 import ru.bmstu.RadialGraph.Graph.*;
 
 import java.util.Scanner;

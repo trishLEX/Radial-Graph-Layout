@@ -1,10 +1,12 @@
 package ru.bmstu.RadialGraph.Algorithms;
 
+import ru.bmstu.RadialGraph.Calculation.BreadthFirstSearch;
+import ru.bmstu.RadialGraph.Calculation.Matrix;
 import ru.bmstu.RadialGraph.Graph.*;
 
 import java.util.ArrayList;
 
-final class Algorithm1 {
+public final class ConcentricCirclesAlgorithm {
     private static final int LENGTH_OF_EDGE = 100;
     private static final int NUMBER_OF_ITERATIONS = 1000;
 
@@ -74,7 +76,8 @@ final class Algorithm1 {
             Z.set(rootIndex, i, W.get(rootIndex, i));
         }
 
-        for (double t = 0.0; t <= 1; t += 1 / NUMBER_OF_ITERATIONS) {
+        for (double t = 0.0; t <= 1; t += (double) 1 / NUMBER_OF_ITERATIONS) {
+            System.out.println(t);
             for (Vertex u: graph.getVertices()) {
                 double sum2 =  0.0;
                 double sum1x = 0.0;
@@ -117,7 +120,8 @@ final class Algorithm1 {
         return coords;
     }
 
-    static void useAlgorithm(Graph graph) {
+    public static void useAlgorithm(Graph graph) {
+        System.out.println("Graph is:");
         System.out.println(graph);
 
         ArrayList<double[]> coords = memorizeCoords(graph);

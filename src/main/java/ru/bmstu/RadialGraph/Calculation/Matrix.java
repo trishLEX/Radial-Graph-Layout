@@ -1,4 +1,4 @@
-package ru.bmstu.RadialGraph.Algorithms;
+package ru.bmstu.RadialGraph.Calculation;
 
 public class Matrix {
     private double[][] matrix;

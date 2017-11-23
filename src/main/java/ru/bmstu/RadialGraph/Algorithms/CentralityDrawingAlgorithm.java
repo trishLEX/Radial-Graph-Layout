@@ -7,7 +7,7 @@ import java.util.ArrayList;
 
 import static ru.bmstu.RadialGraph.Graph.Vertex.isIntersect;
 
-final class Algorithm5 {
+public final class CentralityDrawingAlgorithm {
     private static double R;
     private static final int WIDTH = GraphVisualization.WIDTH;
     private static final int HEIGHT = GraphVisualization.HEIGHT;
@@ -116,7 +116,7 @@ final class Algorithm5 {
         }
     }
 
-    static void useAlgorithm(Graph tree) {
+    public static void useAlgorithm(Graph tree) {
         Vertex root = tree.getRoot();
 
         System.out.println("Root is found");

@@ -1,7 +1,7 @@
 package ru.bmstu.RadialGraph.Visualization;
 
 import org.lwjgl.glfw.GLFWKeyCallback;
-import ru.bmstu.RadialGraph.Algorithms.Calculation;
+import ru.bmstu.RadialGraph.Calculation.Calculation;
 import ru.bmstu.RadialGraph.Graph.*;
 
 import org.lwjgl.glfw.GLFW;

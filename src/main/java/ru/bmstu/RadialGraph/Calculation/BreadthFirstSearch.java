@@ -1,4 +1,7 @@
-package ru.bmstu.RadialGraph.Graph;
+package ru.bmstu.RadialGraph.Calculation;
+
+import ru.bmstu.RadialGraph.Graph.Graph;
+import ru.bmstu.RadialGraph.Graph.Vertex;
 
 import java.util.ArrayDeque;
 

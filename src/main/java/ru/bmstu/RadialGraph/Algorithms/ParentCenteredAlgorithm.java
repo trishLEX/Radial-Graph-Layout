@@ -6,7 +6,7 @@ import java.util.ArrayList;
 
 import static ru.bmstu.RadialGraph.Graph.Vertex.isIntersect;
 
-final class Algorithm3 {
+public final class ParentCenteredAlgorithm {
     private static final double R = 100;
     private static final double PHI = Math.PI;
     private static final double R_OFFSET = Graph.R_OFFSET;
@@ -182,7 +182,7 @@ final class Algorithm3 {
         }
     }
 
-    static void useAlgorithm(Graph tree) {
+    public static void useAlgorithm(Graph tree) {
         Vertex root = tree.getRoot();
 
         System.out.println("Root = " + root);

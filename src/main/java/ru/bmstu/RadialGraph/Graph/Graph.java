@@ -1,5 +1,7 @@
 package ru.bmstu.RadialGraph.Graph;
 
+import ru.bmstu.RadialGraph.Calculation.BreadthFirstSearch;
+
 import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Scanner;

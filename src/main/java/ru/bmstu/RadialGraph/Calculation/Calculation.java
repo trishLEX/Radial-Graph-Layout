@@ -1,15 +1,18 @@
-package ru.bmstu.RadialGraph.Algorithms;
+package ru.bmstu.RadialGraph.Calculation;
 
+import ru.bmstu.RadialGraph.Algorithms.CentralityDrawingAlgorithm;
+import ru.bmstu.RadialGraph.Algorithms.ConcentricCirclesAlgorithm;
+import ru.bmstu.RadialGraph.Algorithms.ParentCenteredAlgorithm;
 import ru.bmstu.RadialGraph.Graph.Graph;
 import ru.bmstu.RadialGraph.Graph.Vertex;
 import ru.bmstu.RadialGraph.Visualization.GraphVisualization;
 
 final public class Calculation {
     private static final int START_INDEX = 0;
-
-    private Graph graph;
     public static int WIDTH = GraphVisualization.WIDTH;
     public static int HEIGHT = GraphVisualization.HEIGHT;
+
+    private Graph graph;
 
     public Calculation(Graph graph) {
         this.graph = graph;
@@ -20,21 +23,21 @@ final public class Calculation {
             //graph.makeTree(graph.get(START_INDEX));
             graph.makeTree(graph.getCenter().get(0));
             System.out.println("Tree is built");
-            Algorithm3.useAlgorithm(graph);
+            ParentCenteredAlgorithm.useAlgorithm(graph);
         }
 
         if (type == 5) {
             //graph.makeTree(graph.get(START_INDEX));
             graph.makeTree(graph.getCenter().get(0));
             System.out.println("Tree is built");
-            Algorithm5.useAlgorithm(graph);
+            CentralityDrawingAlgorithm.useAlgorithm(graph);
         }
 
         if (type == 1) {
             //graph.makeTree(graph.get(START_INDEX));
             graph.makeTree(graph.getCenter().get(0));
-            Algorithm3.useAlgorithm(graph);
-            Algorithm1.useAlgorithm(graph);
+            ParentCenteredAlgorithm.useAlgorithm(graph);
+            ConcentricCirclesAlgorithm.useAlgorithm(graph);
         }
 
         System.out.println(graph);
@@ -101,7 +104,6 @@ final public class Calculation {
         if (width > WIDTH || height > HEIGHT) {
             double side = width > height? width : height;
             WIDTH = HEIGHT = (int) side + 1;
-            System.out.println("HERE HERE HERE");
         }
 
         translateRight(graph, left, right);
