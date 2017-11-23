@@ -19,25 +19,35 @@ final public class Calculation {
     }
 
     public Graph calculateGraph(int type) {
-        if (type == 3) {
-            //graph.makeTree(graph.get(START_INDEX));
-            graph.makeTree(graph.getCenter().get(0));
-            System.out.println("Tree is built");
-            ParentCenteredAlgorithm.useAlgorithm(graph);
-        }
-
-        if (type == 5) {
-            //graph.makeTree(graph.get(START_INDEX));
-            graph.makeTree(graph.getCenter().get(0));
-            System.out.println("Tree is built");
-            ConcentricCirclesAlgorithm.useAlgorithm(graph);
-        }
-
         if (type == 1) {
             //graph.makeTree(graph.get(START_INDEX));
             graph.makeTree(graph.getCenter().get(0));
+            System.out.println("Tree is built");
+
             ParentCenteredAlgorithm.useAlgorithm(graph);
             CentralityDrawingAlgorithm.useAlgorithm(graph);
+        }
+        else if (type == 2) {
+            //graph.makeTree(graph.get(START_INDEX));
+            graph.makeTree(graph.getCenter().get(0));
+            System.out.println("Tree is built");
+
+            ConcentricCirclesAlgorithm.useAlgorithm(graph);
+            CentralityDrawingAlgorithm.useAlgorithm(graph);
+        }
+        else if (type == 3) {
+            //graph.makeTree(graph.get(START_INDEX));
+            graph.makeTree(graph.getCenter().get(0));
+            System.out.println("Tree is built");
+
+            ParentCenteredAlgorithm.useAlgorithm(graph);
+        }
+        else if (type == 4) {
+            //graph.makeTree(graph.get(START_INDEX));
+            graph.makeTree(graph.getCenter().get(0));
+            System.out.println("Tree is built");
+
+            ConcentricCirclesAlgorithm.useAlgorithm(graph);
         }
 
         System.out.println(graph);
