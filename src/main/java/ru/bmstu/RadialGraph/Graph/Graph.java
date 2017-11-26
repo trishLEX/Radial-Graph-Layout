@@ -1,6 +1,10 @@
 package ru.bmstu.RadialGraph.Graph;
 
+import ru.bmstu.RadialGraph.Algorithms.CentralityDrawingAlgorithm;
+import ru.bmstu.RadialGraph.Algorithms.ConcentricCirclesAlgorithm;
+import ru.bmstu.RadialGraph.Algorithms.ParentCenteredAlgorithm;
 import ru.bmstu.RadialGraph.Calculation.BreadthFirstSearch;
+import ru.bmstu.RadialGraph.Visualization.GraphVisualization;
 
 import java.util.ArrayDeque;
 import java.util.ArrayList;
@@ -8,6 +12,8 @@ import java.util.Scanner;
 //TODO сделать метод получние всех вершин без определённой
 public class Graph {
     public static final double R_OFFSET = 1.0;
+    public static int WIDTH = GraphVisualization.WIDTH;
+    public static int HEIGHT = GraphVisualization.HEIGHT;
 
     private ArrayList<Vertex> vertices;
     private int size;
@@ -89,6 +95,18 @@ public class Graph {
         }
     }
 
+    public ArrayList<Vertex[]> getDeleted() {
+        return deleted;
+    }
+
+    public ArrayList<Vertex> getCenter() {
+        return this.center;
+    }
+
+    public int getSize() {
+        return size;
+    }
+
     public void fillRadials5() {
         this.getRadials().clear();
 
@@ -160,6 +178,8 @@ public class Graph {
         v.setRoot(true);
         this.root = v;
 
+        System.out.println(this);
+
         bfs(v);
 
         ArrayList<Vertex[]> deleted = new ArrayList<>();
@@ -180,6 +200,8 @@ public class Graph {
         }
 
         this.deleted = deleted;
+
+        System.out.println(this);
     }
 
     private boolean contains(ArrayList<Vertex[]> deleted, Vertex[] delconn) {
@@ -220,15 +242,187 @@ public class Graph {
         this.center = center;
     }
 
-    public ArrayList<Vertex[]> getDeleted() {
-        return deleted;
+    public void convertCoordinates() {
+        this.calculateWidthAndHeight();
+
+        for (Vertex v: this.getVertices()) {
+            double sx = v.getSign().getX();
+            double sy = v.getSign().getY();
+
+            v.setX(v.getX() / WIDTH * 2);
+            v.setY(v.getY() / HEIGHT * 2);
+            v.setWidth(v.getWidth() / WIDTH * 2);
+            v.setHeight(v.getHeight() / HEIGHT * 2);
+
+            v.getSign().setX(sx / WIDTH * 2);
+            v.getSign().setY(sy / HEIGHT * 2);
+            v.getSign().setWidth(v.getSign().getWidth() / WIDTH * 2);
+            v.getSign().setHeight(v.getSign().getHeight() / HEIGHT * 2);
+
+            System.out.println("CONVERTED COORDINATES " + v.getIndex() + " (" + v.getX() + "," + v.getY() + ") w = " + v.getWidth() + " h = " + v.getHeight());
+            System.out.println("            " + "sign: (" + v.getSign().getX() + "," + v.getSign().getY() + ") w = " + v.getSign().getWidth() + " h = " + v.getSign().getHeight());
+        }
+
+        for (int i = 0; i < this.getRadials().size(); i++) {
+            double r = this.getRadials().get(i) / (WIDTH < HEIGHT? WIDTH : HEIGHT) * 2;
+            this.getRadials().set(i, r);
+        }
     }
 
-    public ArrayList<Vertex> getCenter() {
-        return this.center;
+    private void calculateWidthAndHeight() {
+        double up    = Double.NEGATIVE_INFINITY;
+        double down  = Double.POSITIVE_INFINITY;
+        double right = up;
+        double left  = down;
+
+        for (Vertex v: this.getVertices()) {
+            up = Math.max(v.getY() + v.getHeight() / 2, up);
+            down = Math.min(v.getSign().getY() - v.getSign().getHeight() / 2, down);
+            right = Math.max(v.getSign().getX() + v.getSign().getWidth() / 2, right);
+            left = Math.min(v.getSign().getX() - v.getSign().getWidth() / 2, left);
+        }
+
+        double width  = right - left;
+        double height = up - down;
+
+        System.out.println("width = " + width + " height = " + height + " right = " + right + " left = " + left + " up = " + up + " down = " + down);
+
+        if (width > WIDTH || height > HEIGHT) {
+            double side = width > height? width : height;
+            WIDTH = HEIGHT = (int) side + 1;
+        }
+
+        translateRight(left, right);
+        translateLeft(right, left);
+        translateDown(up, down);
+        translateUp(down, up);
     }
 
-    public int getSize() {
-        return size;
+    private void translateLeft(double right, double left) {
+        double offset = 0.0;
+        while (right > (double) WIDTH / 2.0 - 1.0 && left > - (double) WIDTH / 2.0 + 1.0) {
+            right -= 1.0;
+            left -= 1.0;
+            offset -= 1.0;
+        }
+
+        for (Vertex v: this.getVertices()) {
+            v.setX(v.getX() + offset);
+        }
+
+        System.out.println("left = " + left + " right = " + right);
+    }
+
+    private void translateRight(double left, double right) {
+        double offset = 0.0;
+        while (left < - (double) WIDTH / 2.0 + 1.0 && right < (double) WIDTH / 2.0 - 1.0) {
+            left += 5.0;
+            offset += 5.0;
+        }
+
+        for (Vertex v: this.getVertices()) {
+            v.setX(v.getX() + offset);
+        }
+    }
+
+    private void translateDown(double up, double down) {
+        double offset = 0.0;
+        while (up > (double) HEIGHT / 2.0 - 1.0 && down > - (double) HEIGHT / 2.0 + 1.0) {
+            up -= 5.0;
+            offset -= 5.0;
+        }
+
+        for (Vertex v: this.getVertices()) {
+            v.setY(v.getY() + offset);
+        }
+    }
+
+    private void translateUp(double down, double up) {
+        double offset = 0.0;
+        while (down < - (double) HEIGHT / 2.0 + 1 && up < (double) HEIGHT / 2.0 - 1) {
+            down += 1.0;
+            up += 1.0;
+            offset += 1.0;
+        }
+
+        for (Vertex v: this.getVertices()) {
+            v.setY(v.getY() + offset);
+        }
+
+        System.out.println("up = " + up + " down = " + down);
+    }
+
+    private Vertex findVertex(double x, double y) {
+        for (Vertex v: vertices) {
+            if (0 <= Math.abs(y - v.getY()) && Math.abs(y - v.getY()) <= v.getHeight() / 2 && 0 <= Math.abs(x - v.getX()) && Math.abs(x - v.getX()) <= v.getWidth() / 2)
+                return v;
+        }
+
+        return null;
+    }
+
+    public void rebuild(double x, double y, int type) {
+        System.out.println("x = " + x + " y = " + y);
+
+        Vertex newRoot = findVertex(x, y);
+
+        if (newRoot != null) {
+            System.out.println("vertex is chosen: " + newRoot.getIndex());
+
+            for (Vertex v : vertices) {
+                v.setVertexByCartesian(0, 0);
+                if (v.getParent() != null) {
+                    v.addChild(v.getParent());
+                    v.setParent(null);
+                }
+                v.setDepth(0);
+                v.setRoot(false);
+                v.setMark(0);
+                v.setWidth(Vertex.VERTEX_WIDTH);
+                v.setHeight(Vertex.VERTEX_HEIGHT);
+                v.getSign().setX(v.getX());
+                v.getSign().setY(y - v.getHeight() / 2);
+                v.getSign().setWidth(Sign.SIGN_WIDTH);
+                v.getSign().setHeight(Sign.SIGN_HEIGHT);
+            }
+            for (Vertex[] del : deleted) {
+                del[0].addChild(del[1]);
+                del[1].addChild(del[0]);
+            }
+
+            this.deleted.clear();
+            this.radials.clear();
+            this.verticesByDepth.clear();
+            this.center.clear();
+            this.maxDepth = 0;
+
+            makeTree(newRoot);
+            System.out.println(this);
+            System.out.println("Tree is built");
+
+            if (type == 1) {
+                ParentCenteredAlgorithm.useAlgorithm(this);
+                CentralityDrawingAlgorithm.useAlgorithm(this);
+            }
+            else if (type == 2) {
+                ConcentricCirclesAlgorithm.useAlgorithm(this);
+                CentralityDrawingAlgorithm.useAlgorithm(this);
+            }
+            else if (type == 3)
+                ParentCenteredAlgorithm.useAlgorithm(this);
+            else if (type == 4)
+                ConcentricCirclesAlgorithm.useAlgorithm(this);
+
+            System.out.println(this);
+
+            System.out.println("RADIALS " + this.getRadials());
+
+            for (Vertex v: this.getVertices()) {
+                System.out.println("COORDINATES " + v.getIndex() + " (" + v.getX() + "," + v.getY() + ") w = " + v.getWidth() + " h = " + v.getHeight());
+                System.out.println("            " + "sign: (" + v.getSign().getX() + "," + v.getSign().getY() + ") w = " + v.getSign().getWidth() + " h = " + v.getSign().getHeight());
+            }
+
+            this.convertCoordinates();
+        }
     }
 }

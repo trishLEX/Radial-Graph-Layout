@@ -66,7 +66,9 @@ public final class ConcentricCirclesAlgorithm {
     }
 
     private static int leavesCount = 0;
+
     private static int leavesCounter(Vertex root) {
+        leavesCount = 0;
         countLeaves(root);
         return leavesCount;
     }
@@ -99,11 +101,9 @@ public final class ConcentricCirclesAlgorithm {
             T.getRadials().add(R_D);
 
         int k = leavesCounter(v);
-        leavesCount = 0;
 
         for (Vertex c: v.getChild()) {
             int lambda = leavesCounter(c);
-            leavesCount = 0;
 
             double mu = theta + ((beta - alpha) * lambda / k);
 

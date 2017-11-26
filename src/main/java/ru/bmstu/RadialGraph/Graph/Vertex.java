@@ -308,4 +308,9 @@ public class Vertex {
     public static boolean isIntersect(Vertex v, Vertex u) {
         return v.isIn(u) || u.isIn(v);
     }
+
+    public void addChild(Vertex v) {
+        if (!this.child.contains(v))
+            this.child.add(v);
+    }
 }

@@ -1,11 +1,9 @@
 package ru.bmstu.RadialGraph.Visualization;
 
-import org.lwjgl.glfw.GLFWKeyCallback;
+import org.lwjgl.glfw.*;
 import ru.bmstu.RadialGraph.Calculation.Calculation;
 import ru.bmstu.RadialGraph.Graph.*;
 
-import org.lwjgl.glfw.GLFW;
-import org.lwjgl.glfw.GLFWErrorCallback;
 import org.lwjgl.opengl.GL;
 
 import static java.lang.Math.PI;
@@ -24,14 +22,17 @@ class Drawer {
     private static final double[] WHITE = {1.0, 1.0, 1.0};
 
     private static final String NAME = "Radial Graph";
-    private static final int WIDTH = Calculation.WIDTH;
-    private static final int HEIGHT = Calculation.HEIGHT;
+    private static final int WIDTH = Graph.WIDTH;
+    private static final int HEIGHT = Graph.HEIGHT;
 
     private long window;
 
     private Graph graph;
 
     private int type;
+
+    private double x;
+    private double y;
 
     private boolean toDrawRadials = true;
     private boolean toDrawDeleted = false;
@@ -45,6 +46,8 @@ class Drawer {
     Drawer(Graph graph, int type) {
         this.graph = graph;
         this.type = type;
+        this.x = 0;
+        this.y = 0;
 
         GLFWErrorCallback.createPrint(System.err).set();
 
@@ -68,6 +71,17 @@ class Drawer {
             }
             else if (key == GLFW_KEY_D && action == GLFW_PRESS) {
                 toDrawDeleted = !toDrawDeleted;
+            }
+        }));
+
+        glfwSetCursorPosCallback(window, GLFWCursorPosCallback.create((window, xpos, ypos) -> {
+                    this.x = (xpos - WIDTH / 2) / WIDTH * 2;
+                    this.y = (HEIGHT / 2 - ypos) / HEIGHT * 2;
+                }));
+
+        glfwSetMouseButtonCallback(window, GLFWMouseButtonCallback.create((window, button, action, mods) -> {
+            if (button == GLFW_MOUSE_BUTTON_1 && action == GLFW_PRESS) {
+                this.graph.rebuild(x, y, type);
             }
         }));
     }
@@ -192,7 +206,7 @@ class Drawer {
 
         drawGraph(this.graph);
 
-        if ((type == 5 || type == 1) && toDrawRadials) {
+        if ((type == 4 || type == 1 || type == 2) && toDrawRadials) {
             glLineWidth(1);
             drawCircles();
         }
