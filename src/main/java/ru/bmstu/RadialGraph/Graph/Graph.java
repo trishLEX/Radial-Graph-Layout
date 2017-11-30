@@ -117,16 +117,16 @@ public class Graph {
 
     private void calculateMaxDepth(Vertex root, int depth) {
         for (Vertex v: root.getChild()) {
-            System.out.println(depth);
+
             v.setDepth(depth + 1);
             if (depth + 1 > maxDepth)
                 maxDepth = depth + 1;
+
             calculateMaxDepth(v, depth + 1);
         }
     }
 
     public void calculateMaxDepth(Vertex root) {
-        //root.setDepth(0);
         calculateMaxDepth(root, 0);
 
         ArrayList<ArrayList<Vertex>> verticesByDepth = new ArrayList<ArrayList<Vertex>>();
@@ -178,8 +178,6 @@ public class Graph {
         v.setRoot(true);
         this.root = v;
 
-        System.out.println(this);
-
         bfs(v);
 
         ArrayList<Vertex[]> deleted = new ArrayList<>();
@@ -200,8 +198,6 @@ public class Graph {
         }
 
         this.deleted = deleted;
-
-        System.out.println(this);
     }
 
     private boolean contains(ArrayList<Vertex[]> deleted, Vertex[] delconn) {
@@ -242,8 +238,8 @@ public class Graph {
         this.center = center;
     }
 
-    public void convertCoordinates() {
-        this.calculateWidthAndHeight();
+    public void convertCoordinates(boolean isRedraw) {
+        this.calculateWidthAndHeight(isRedraw);
 
         for (Vertex v: this.getVertices()) {
             double sx = v.getSign().getX();
@@ -269,7 +265,7 @@ public class Graph {
         }
     }
 
-    private void calculateWidthAndHeight() {
+    private void calculateWidthAndHeight(boolean isRedraw) {
         double up    = Double.NEGATIVE_INFINITY;
         double down  = Double.POSITIVE_INFINITY;
         double right = up;
@@ -288,8 +284,16 @@ public class Graph {
         System.out.println("width = " + width + " height = " + height + " right = " + right + " left = " + left + " up = " + up + " down = " + down);
 
         if (width > WIDTH || height > HEIGHT) {
-            double side = width > height? width : height;
-            WIDTH = HEIGHT = (int) side + 1;
+            double side = width > height ? width : height;
+            if (!isRedraw) {
+                WIDTH = HEIGHT = (int) side + 1;
+            }
+            else {
+                double coeff = WIDTH / side;
+                for (Vertex v: vertices) {
+                    v.setVertexByCartesian(v.getX() * coeff, v.getY() * coeff);
+                }
+            }
         }
 
         translateRight(left, right);
@@ -367,8 +371,6 @@ public class Graph {
         Vertex newRoot = findVertex(x, y);
 
         if (newRoot != null) {
-            System.out.println("vertex is chosen: " + newRoot.getIndex());
-
             for (Vertex v : vertices) {
                 v.setVertexByCartesian(0, 0);
                 if (v.getParent() != null) {
@@ -422,7 +424,7 @@ public class Graph {
                 System.out.println("            " + "sign: (" + v.getSign().getX() + "," + v.getSign().getY() + ") w = " + v.getSign().getWidth() + " h = " + v.getSign().getHeight());
             }
 
-            this.convertCoordinates();
+            this.convertCoordinates(true);
         }
     }
 }
