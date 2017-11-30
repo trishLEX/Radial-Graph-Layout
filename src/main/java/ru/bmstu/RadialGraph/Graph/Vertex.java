@@ -40,24 +40,6 @@ public class Vertex {
         this.sign = new Sign(x, y - height / 2);
     }
 
-    protected Vertex() {
-        this.child = new ArrayList<>();
-        this.parent = null;
-        this.x = this.y = 0;
-        this.index = 0;
-        this.depth = 0;
-
-        this.mark = 0;
-        this.isRoot = false;
-
-        this.r = 0;
-        this.angle = 0;
-
-        this.width = this.height = 0.02;
-
-        this.sign = new Sign(x, y - height / 2 - Sign.SIGN_HEIGHT / 2);
-    }
-
     public ArrayList<Vertex> getChild() {
             return child;
     }

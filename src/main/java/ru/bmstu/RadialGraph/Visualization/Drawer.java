@@ -1,7 +1,6 @@
 package ru.bmstu.RadialGraph.Visualization;
 
 import org.lwjgl.glfw.*;
-import ru.bmstu.RadialGraph.Calculation.Calculation;
 import ru.bmstu.RadialGraph.Graph.*;
 
 import org.lwjgl.opengl.GL;

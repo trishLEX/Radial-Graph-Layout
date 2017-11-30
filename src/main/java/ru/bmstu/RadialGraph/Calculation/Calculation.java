@@ -5,12 +5,9 @@ import ru.bmstu.RadialGraph.Algorithms.CentralityDrawingAlgorithm;
 import ru.bmstu.RadialGraph.Algorithms.ParentCenteredAlgorithm;
 import ru.bmstu.RadialGraph.Graph.Graph;
 import ru.bmstu.RadialGraph.Graph.Vertex;
-import ru.bmstu.RadialGraph.Visualization.GraphVisualization;
 
 final public class Calculation {
     private static final int START_INDEX = 0;
-    public static int WIDTH = GraphVisualization.WIDTH;
-    public static int HEIGHT = GraphVisualization.HEIGHT;
 
     private Graph graph;
 
@@ -60,7 +57,7 @@ final public class Calculation {
             System.out.println("            " + "sign: (" + v.getSign().getX() + "," + v.getSign().getY() + ") w = " + v.getSign().getWidth() + " h = " + v.getSign().getHeight());
         }
 
-        graph.convertCoordinates();
+        graph.convertCoordinates(false, type);
 
         return graph;
     }

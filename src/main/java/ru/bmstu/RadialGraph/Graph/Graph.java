@@ -84,14 +84,14 @@ public class Graph {
         return radials;
     }
 
-    public void fillRadials3() {
-        this.getRadials().clear();
+    public void fillRadialsByParentCentered() {
+        this.radials.clear();
 
-        for (Vertex v: this.getVertices()) {
+        for (Vertex v: this.vertices) {
             if (v.getChild().size() != 0)
-                this.getRadials().add(v.distTo(v.getChild().get(0)));
+                this.radials.add(v.distTo(v.getChild().get(0)));
             else
-                this.getRadials().add(0.0);
+                this.radials.add(0.0);
         }
     }
 
@@ -107,8 +107,8 @@ public class Graph {
         return size;
     }
 
-    public void fillRadials5() {
-        this.getRadials().clear();
+    public void fillRadialsByConcentricCircle() {
+        this.radials.clear();
 
         for (int i = 0; i <= this.maxDepth; i++) {
             this.radials.add(root.distTo(this.verticesByDepth.get(i).get(0)));
@@ -129,7 +129,7 @@ public class Graph {
     public void calculateMaxDepth(Vertex root) {
         calculateMaxDepth(root, 0);
 
-        ArrayList<ArrayList<Vertex>> verticesByDepth = new ArrayList<ArrayList<Vertex>>();
+        ArrayList<ArrayList<Vertex>> verticesByDepth = new ArrayList<>();
 
         for (int i = 0; i <= maxDepth; i++)
             verticesByDepth.add(new ArrayList<>());
@@ -184,12 +184,14 @@ public class Graph {
 
         for (Vertex vertex: vertices) {
             ArrayList<Vertex> temp = new ArrayList<>();
+
             for (Vertex u: vertex.getChild()) {
                 if (u.getParent() == vertex) {
                     temp.add(u);
                 }
                 else {
                     Vertex[] deletedConnection = new Vertex[] {vertex, u};
+
                     if (!contains(deleted, deletedConnection))
                         deleted.add(deletedConnection);
                 }
@@ -211,16 +213,20 @@ public class Graph {
 
     private int eccentricity(Vertex v) {
         BreadthFirstSearch bfs = new BreadthFirstSearch(this, v);
+
         int max = bfs.getDistTo(0);
-        for (int i = 1; i < vertices.size(); i++) {
+
+        for (int i = 1; i < size; i++) {
             max = Math.max(max, bfs.getDistTo(i));
         }
+
         return max;
     }
 
     private void graphRadii() {
         int min = eccentricity(vertices.get(0));
-        for (int i = 1; i < vertices.size(); i++) {
+
+        for (int i = 1; i < size; i++) {
             min = Math.min(min, eccentricity(vertices.get(i)));
         }
 
@@ -229,19 +235,23 @@ public class Graph {
 
     private void calculateCenter() {
         ArrayList<Vertex> center = new ArrayList<>();
+
         graphRadii();
+
         System.out.println("radii = " + radii);
+
         for (Vertex v: vertices) {
             if (eccentricity(v) == radii)
                 center.add(v);
         }
+
         this.center = center;
     }
 
-    public void convertCoordinates(boolean isRedraw) {
-        this.calculateWidthAndHeight(isRedraw);
+    public void convertCoordinates(boolean isRedraw, int type) {
+        this.calculateWidthAndHeight(isRedraw, type);
 
-        for (Vertex v: this.getVertices()) {
+        for (Vertex v: vertices) {
             double sx = v.getSign().getX();
             double sy = v.getSign().getY();
 
@@ -259,27 +269,37 @@ public class Graph {
             System.out.println("            " + "sign: (" + v.getSign().getX() + "," + v.getSign().getY() + ") w = " + v.getSign().getWidth() + " h = " + v.getSign().getHeight());
         }
 
-        for (int i = 0; i < this.getRadials().size(); i++) {
-            double r = this.getRadials().get(i) / (WIDTH < HEIGHT? WIDTH : HEIGHT) * 2;
-            this.getRadials().set(i, r);
+        for (int i = 0; i < this.radials.size(); i++) {
+            double r = this.radials.get(i) / (WIDTH < HEIGHT? WIDTH : HEIGHT) * 2;
+            this.radials.set(i, r);
         }
     }
 
-    private void calculateWidthAndHeight(boolean isRedraw) {
+    private double[] findCorners() {
         double up    = Double.NEGATIVE_INFINITY;
         double down  = Double.POSITIVE_INFINITY;
         double right = up;
         double left  = down;
 
-        for (Vertex v: this.getVertices()) {
+        for (Vertex v: vertices) {
             up = Math.max(v.getY() + v.getHeight() / 2, up);
             down = Math.min(v.getSign().getY() - v.getSign().getHeight() / 2, down);
             right = Math.max(v.getSign().getX() + v.getSign().getWidth() / 2, right);
             left = Math.min(v.getSign().getX() - v.getSign().getWidth() / 2, left);
         }
 
-        double width  = right - left;
-        double height = up - down;
+        return new double[] {up, down, right, left, right - left, up - down};
+    }
+
+    private void calculateWidthAndHeight(boolean isRedraw, int type) {
+        double[] corners = findCorners();
+
+        double up = corners[0];
+        double down = corners[1];
+        double right = corners[2];
+        double left = corners[3];
+        double width = corners[4];
+        double height = corners[5];
 
         System.out.println("width = " + width + " height = " + height + " right = " + right + " left = " + left + " up = " + up + " down = " + down);
 
@@ -293,6 +313,21 @@ public class Graph {
                 for (Vertex v: vertices) {
                     v.setVertexByCartesian(v.getX() * coeff, v.getY() * coeff);
                 }
+                if (type == 3)
+                    this.fillRadialsByParentCentered();
+                else
+                    this.fillRadialsByConcentricCircle();
+
+                corners = findCorners();
+
+                up = corners[0];
+                down = corners[1];
+                right = corners[2];
+                left = corners[3];
+                width = corners[4];
+                height = corners[5];
+
+                System.out.println("width = " + width + " height = " + height + " right = " + right + " left = " + left + " up = " + up + " down = " + down);
             }
         }
 
@@ -304,13 +339,14 @@ public class Graph {
 
     private void translateLeft(double right, double left) {
         double offset = 0.0;
+
         while (right > (double) WIDTH / 2.0 - 1.0 && left > - (double) WIDTH / 2.0 + 1.0) {
             right -= 1.0;
             left -= 1.0;
             offset -= 1.0;
         }
 
-        for (Vertex v: this.getVertices()) {
+        for (Vertex v: this.vertices) {
             v.setX(v.getX() + offset);
         }
 
@@ -319,37 +355,40 @@ public class Graph {
 
     private void translateRight(double left, double right) {
         double offset = 0.0;
-        while (left < - (double) WIDTH / 2.0 + 1.0 && right < (double) WIDTH / 2.0 - 1.0) {
-            left += 5.0;
-            offset += 5.0;
+
+        while (left < - (double) WIDTH / 2.0 + 1.0) {
+            left += 1.0;
+            offset += 1.0;
         }
 
-        for (Vertex v: this.getVertices()) {
+        for (Vertex v: this.vertices) {
             v.setX(v.getX() + offset);
         }
     }
 
     private void translateDown(double up, double down) {
         double offset = 0.0;
-        while (up > (double) HEIGHT / 2.0 - 1.0 && down > - (double) HEIGHT / 2.0 + 1.0) {
-            up -= 5.0;
-            offset -= 5.0;
+
+        while (up > (double) HEIGHT / 2.0 - 1.0) {
+            up -= 1.0;
+            offset -= 1.0;
         }
 
-        for (Vertex v: this.getVertices()) {
+        for (Vertex v: this.vertices) {
             v.setY(v.getY() + offset);
         }
     }
 
     private void translateUp(double down, double up) {
         double offset = 0.0;
+
         while (down < - (double) HEIGHT / 2.0 + 1 && up < (double) HEIGHT / 2.0 - 1) {
             down += 1.0;
             up += 1.0;
             offset += 1.0;
         }
 
-        for (Vertex v: this.getVertices()) {
+        for (Vertex v: this.vertices) {
             v.setY(v.getY() + offset);
         }
 
@@ -358,6 +397,7 @@ public class Graph {
 
     private Vertex findVertex(double x, double y) {
         for (Vertex v: vertices) {
+
             if (0 <= Math.abs(y - v.getY()) && Math.abs(y - v.getY()) <= v.getHeight() / 2 && 0 <= Math.abs(x - v.getX()) && Math.abs(x - v.getX()) <= v.getWidth() / 2)
                 return v;
         }
@@ -370,18 +410,24 @@ public class Graph {
 
         Vertex newRoot = findVertex(x, y);
 
+        System.out.println("new root is " + newRoot);
+
         if (newRoot != null) {
             for (Vertex v : vertices) {
                 v.setVertexByCartesian(0, 0);
+
                 if (v.getParent() != null) {
                     v.addChild(v.getParent());
                     v.setParent(null);
                 }
+
                 v.setDepth(0);
                 v.setRoot(false);
                 v.setMark(0);
+
                 v.setWidth(Vertex.VERTEX_WIDTH);
                 v.setHeight(Vertex.VERTEX_HEIGHT);
+
                 v.getSign().setX(v.getX());
                 v.getSign().setY(y - v.getHeight() / 2);
                 v.getSign().setWidth(Sign.SIGN_WIDTH);
@@ -417,14 +463,14 @@ public class Graph {
 
             System.out.println(this);
 
-            System.out.println("RADIALS " + this.getRadials());
+            System.out.println("RADIALS " + this.radials);
 
             for (Vertex v: this.getVertices()) {
                 System.out.println("COORDINATES " + v.getIndex() + " (" + v.getX() + "," + v.getY() + ") w = " + v.getWidth() + " h = " + v.getHeight());
                 System.out.println("            " + "sign: (" + v.getSign().getX() + "," + v.getSign().getY() + ") w = " + v.getSign().getWidth() + " h = " + v.getSign().getHeight());
             }
 
-            this.convertCoordinates(true);
+            this.convertCoordinates(true, type);
         }
     }
 }

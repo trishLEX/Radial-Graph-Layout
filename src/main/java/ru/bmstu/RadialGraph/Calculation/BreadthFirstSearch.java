@@ -14,6 +14,7 @@ public final class BreadthFirstSearch {
         this.marked = new boolean[G.getVertices().size()];
         this.edgeTo = new Vertex[G.getVertices().size()];
         this.distTo = new int[G.getVertices().size()];
+
         bfs(start);
     }
 
@@ -21,21 +22,29 @@ public final class BreadthFirstSearch {
         ArrayDeque<Vertex> queue = new ArrayDeque<>();
         distTo[start.getIndex()] = 0;
         marked[start.getIndex()] = true;
+
         queue.add(start);
+
         while (!queue.isEmpty()) {
             Vertex v = queue.poll();
-            for (Vertex w: v.getChild())
+
+            for (Vertex w : v.getChild()){
                 if (!marked[w.getIndex()]) {
                     edgeTo[w.getIndex()] = v;
                     distTo[w.getIndex()] = distTo[v.getIndex()] + 1;
                     marked[w.getIndex()] = true;
+
                     queue.add(w);
                 }
+            }
+
             Vertex w = v.getParent();
+
             if (w != null && !marked[w.getIndex()]) {
                 edgeTo[w.getIndex()] = v;
                 distTo[w.getIndex()] = distTo[v.getIndex()] + 1;
                 marked[w.getIndex()] = true;
+
                 queue.add(w);
             }
         }

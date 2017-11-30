@@ -95,8 +95,8 @@ public final class CentralityDrawingAlgorithm {
 
         focusingOnNode(graph, coords);
 
-        System.out.println("Centrality drawing is prepared");
+        System.out.println("Centrality drawing is calculated");
 
-        graph.fillRadials5();
+        graph.fillRadialsByConcentricCircle();
     }
 }

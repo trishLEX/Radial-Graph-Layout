@@ -84,7 +84,6 @@ public final class ParentCenteredAlgorithm {
                     }
                 }
 
-                System.out.println("v = " + v + " angle = " + v.getAngle() + " r = " + v.getR());
                 tree.getRadials().add(v.getR());
             }
         }
@@ -128,8 +127,6 @@ public final class ParentCenteredAlgorithm {
         else
             while (tempV.getDepth() != tempU.getDepth())
                 tempU = tempU.getParent();
-
-        System.out.println("tempV and tempU are founded");
 
         Vertex vP = tempV.getParent();
         Vertex uP = tempU.getParent();
@@ -187,7 +184,7 @@ public final class ParentCenteredAlgorithm {
     public static void useAlgorithm(Graph tree) {
         Vertex root = tree.getRoot();
 
-        System.out.println("Root = " + root);
+        System.out.println("Root is found: " + root);
 
         tree.calculateMaxDepth(root);
 
@@ -195,21 +192,18 @@ public final class ParentCenteredAlgorithm {
 
         radialPositions(tree, root);
 
-        System.out.println("GRAPH: " + "\n" + tree);
         System.out.println("Radial positions are found");
 
         for (ArrayList<Vertex> currentDepth: tree.getVerticesByDepth())
             for (Vertex v: currentDepth)
                 v.castToCartesianCoordinates();
 
-        System.out.println("Coordinates are casted to cartesian, GRAPH:\n" + tree);
+        System.out.println("Coordinates are casted to cartesian");
 
         deleteIntersections(tree);
 
-        System.out.println("GRAPH: " + "\n" + tree);
-
         System.out.println("Intersections are deleted");
 
-        tree.fillRadials3();
+        tree.fillRadialsByParentCentered();
     }
 }
