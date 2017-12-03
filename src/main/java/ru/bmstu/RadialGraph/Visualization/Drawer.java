@@ -21,8 +21,6 @@ class Drawer {
     private static final double[] WHITE = {1.0, 1.0, 1.0};
 
     private static final String NAME = "Radial Graph";
-    private static final int WIDTH = Graph.WIDTH;
-    private static final int HEIGHT = Graph.HEIGHT;
 
     private long window;
 
@@ -30,8 +28,8 @@ class Drawer {
 
     private int type;
 
-    private double x;
-    private double y;
+    private double cursorX;
+    private double cursorY;
 
     private boolean toDrawRadials = true;
     private boolean toDrawDeleted = false;
@@ -45,16 +43,18 @@ class Drawer {
     Drawer(Graph graph, int type) {
         this.graph = graph;
         this.type = type;
-        this.x = 0;
-        this.y = 0;
+        this.cursorX = 0;
+        this.cursorY = 0;
 
         GLFWErrorCallback.createPrint(System.err).set();
 
         if (!glfwInit())
             throw new IllegalStateException("unable to initialize GLFW");
 
-        System.out.println("WINDOW width = " + WIDTH + " height = " + HEIGHT);
-        this.window = GLFW.glfwCreateWindow(WIDTH, HEIGHT, NAME, 0, 0);
+        final int SIZE = this.graph.getWindowSize();
+
+        System.out.println("WINDOW size = " + SIZE);
+        this.window = GLFW.glfwCreateWindow(SIZE, SIZE, NAME, 0, 0);
 
         if (window == 0) {
             throw new RuntimeException("Failed to create window");
@@ -74,13 +74,14 @@ class Drawer {
         }));
 
         glfwSetCursorPosCallback(window, GLFWCursorPosCallback.create((window, xpos, ypos) -> {
-                    this.x = (xpos - WIDTH / 2) / WIDTH * 2;
-                    this.y = (HEIGHT / 2 - ypos) / HEIGHT * 2;
-                }));
+            this.cursorX = (xpos - SIZE / 2) / SIZE * 2;
+            this.cursorY = (SIZE / 2 - ypos) / SIZE * 2;
+        }));
 
         glfwSetMouseButtonCallback(window, GLFWMouseButtonCallback.create((window, button, action, mods) -> {
             if (button == GLFW_MOUSE_BUTTON_1 && action == GLFW_PRESS) {
-                this.graph.rebuild(x, y, type);
+                System.out.println("x = " + cursorX / 2 * SIZE + " y = " + cursorY / 2 * SIZE);
+                this.graph.rebuild(cursorX, cursorY, type);
             }
         }));
     }

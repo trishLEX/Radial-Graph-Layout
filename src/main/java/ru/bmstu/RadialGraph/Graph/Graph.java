@@ -11,9 +11,11 @@ import java.util.ArrayList;
 import java.util.Scanner;
 //TODO сделать метод получние всех вершин без определённой
 public class Graph {
-    public static final double R_OFFSET = 1.0;
-    public static int WIDTH = GraphVisualization.WIDTH;
-    public static int HEIGHT = GraphVisualization.HEIGHT;
+    public final static double R_OFFSET = 1.0;
+
+    private final static int MAX_SIZE = GraphVisualization.MAX_SIZE;
+
+    private int SIZE = GraphVisualization.SIZE;
 
     private ArrayList<Vertex> vertices;
     private int size;
@@ -24,6 +26,8 @@ public class Graph {
     private int maxDepth;
     private ArrayList<Vertex> center;
     private int radii;
+
+    private boolean incompatibility = false;
 
     public int getMaxDepth() {
         return maxDepth;
@@ -173,12 +177,23 @@ public class Graph {
         }
     }
 
+    private void checkForConnections() {
+        int count = 0;
+        for (Vertex v: vertices)
+            if (v.getDepth() == 0)
+                count++;
+
+        if (count != 1)
+            throw new RuntimeException("The number of connected component is more than one");
+    }
 
     public void makeTree(Vertex v) {
         v.setRoot(true);
         this.root = v;
 
         bfs(v);
+
+        checkForConnections();
 
         ArrayList<Vertex[]> deleted = new ArrayList<>();
 
@@ -251,26 +266,28 @@ public class Graph {
     public void convertCoordinates(boolean isRedraw, int type) {
         this.calculateWidthAndHeight(isRedraw, type);
 
+        System.out.println("final Graph:\n" + this);
+
         for (Vertex v: vertices) {
             double sx = v.getSign().getX();
             double sy = v.getSign().getY();
 
-            v.setX(v.getX() / WIDTH * 2);
-            v.setY(v.getY() / HEIGHT * 2);
-            v.setWidth(v.getWidth() / WIDTH * 2);
-            v.setHeight(v.getHeight() / HEIGHT * 2);
+            v.setX(v.getX() / SIZE * 2);
+            v.setY(v.getY() / SIZE * 2);
+            v.setWidth(v.getWidth() / SIZE * 2);
+            v.setHeight(v.getHeight() / SIZE * 2);
 
-            v.getSign().setX(sx / WIDTH * 2);
-            v.getSign().setY(sy / HEIGHT * 2);
-            v.getSign().setWidth(v.getSign().getWidth() / WIDTH * 2);
-            v.getSign().setHeight(v.getSign().getHeight() / HEIGHT * 2);
+            v.getSign().setX(sx / SIZE * 2);
+            v.getSign().setY(sy / SIZE * 2);
+            v.getSign().setWidth(v.getSign().getWidth() / SIZE * 2);
+            v.getSign().setHeight(v.getSign().getHeight() / SIZE * 2);
 
             System.out.println("CONVERTED COORDINATES " + v.getIndex() + " (" + v.getX() + "," + v.getY() + ") w = " + v.getWidth() + " h = " + v.getHeight());
             System.out.println("            " + "sign: (" + v.getSign().getX() + "," + v.getSign().getY() + ") w = " + v.getSign().getWidth() + " h = " + v.getSign().getHeight());
         }
 
         for (int i = 0; i < this.radials.size(); i++) {
-            double r = this.radials.get(i) / (WIDTH < HEIGHT? WIDTH : HEIGHT) * 2;
+            double r = this.radials.get(i) / SIZE * 2;
             this.radials.set(i, r);
         }
     }
@@ -291,6 +308,17 @@ public class Graph {
         return new double[] {up, down, right, left, right - left, up - down};
     }
 
+    private void resizeCoords(double coefficient, int type) {
+        for (Vertex v : vertices) {
+            v.setVertexByCartesian(v.getX() * coefficient, v.getY() * coefficient);
+        }
+
+        if (type == 3)
+            this.fillRadialsByParentCentered();
+        else
+            this.fillRadialsByConcentricCircle();
+    }
+
     private void calculateWidthAndHeight(boolean isRedraw, int type) {
         double[] corners = findCorners();
 
@@ -303,20 +331,35 @@ public class Graph {
 
         System.out.println("width = " + width + " height = " + height + " right = " + right + " left = " + left + " up = " + up + " down = " + down);
 
-        if (width > WIDTH || height > HEIGHT) {
+        if (width > SIZE || height > SIZE) {
             double side = width > height ? width : height;
+
             if (!isRedraw) {
-                WIDTH = HEIGHT = (int) side + 1;
+                SIZE = (int) side + 1;
+
+                if (width > MAX_SIZE || height > MAX_SIZE) {
+                    incompatibility = true;
+                }
+
+                if (incompatibility) {
+                    SIZE = MAX_SIZE;
+                    double resizeCoeff = SIZE / side;
+
+                    resizeCoords(resizeCoeff, type);
+
+                    up *= resizeCoeff;
+                    left *= resizeCoeff;
+                    right *= resizeCoeff;
+                    down *= resizeCoeff;
+                    width *= resizeCoeff;
+                    height *= resizeCoeff;
+                }
+
             }
             else {
-                double coeff = WIDTH / side;
-                for (Vertex v: vertices) {
-                    v.setVertexByCartesian(v.getX() * coeff, v.getY() * coeff);
-                }
-                if (type == 3)
-                    this.fillRadialsByParentCentered();
-                else
-                    this.fillRadialsByConcentricCircle();
+                double resizeCoeff = SIZE / side;
+
+                resizeCoords(resizeCoeff, type);
 
                 corners = findCorners();
 
@@ -331,17 +374,16 @@ public class Graph {
             }
         }
 
-        translateRight(left, right);
-        translateLeft(right, left);
-        translateDown(up, down);
-        translateUp(down, up);
+        translateRight(left);
+        translateLeft(left);
+        translateDown(up);
+        translateUp(up);
     }
 
-    private void translateLeft(double right, double left) {
+    private void translateLeft(double left) {
         double offset = 0.0;
 
-        while (right > (double) WIDTH / 2.0 - 1.0 && left > - (double) WIDTH / 2.0 + 1.0) {
-            right -= 1.0;
+        while (left > - (double) SIZE / 2.0 + 1.0) {
             left -= 1.0;
             offset -= 1.0;
         }
@@ -350,13 +392,13 @@ public class Graph {
             v.setX(v.getX() + offset);
         }
 
-        System.out.println("left = " + left + " right = " + right);
+        System.out.println("left = " + left);
     }
 
-    private void translateRight(double left, double right) {
+    private void translateRight(double left) {
         double offset = 0.0;
 
-        while (left < - (double) WIDTH / 2.0 + 1.0) {
+        while (left < - (double) SIZE / 2.0 + 1.0) {
             left += 1.0;
             offset += 1.0;
         }
@@ -366,10 +408,10 @@ public class Graph {
         }
     }
 
-    private void translateDown(double up, double down) {
+    private void translateDown(double up) {
         double offset = 0.0;
 
-        while (up > (double) HEIGHT / 2.0 - 1.0) {
+        while (up > (double) SIZE / 2.0 - 1.0) {
             up -= 1.0;
             offset -= 1.0;
         }
@@ -379,11 +421,10 @@ public class Graph {
         }
     }
 
-    private void translateUp(double down, double up) {
+    private void translateUp(double up) {
         double offset = 0.0;
 
-        while (down < - (double) HEIGHT / 2.0 + 1 && up < (double) HEIGHT / 2.0 - 1) {
-            down += 1.0;
+        while (up < (double) SIZE / 2.0 - 1) {
             up += 1.0;
             offset += 1.0;
         }
@@ -392,13 +433,20 @@ public class Graph {
             v.setY(v.getY() + offset);
         }
 
-        System.out.println("up = " + up + " down = " + down);
+        System.out.println("up = " + up);
     }
 
     private Vertex findVertex(double x, double y) {
         for (Vertex v: vertices) {
 
-            if (0 <= Math.abs(y - v.getY()) && Math.abs(y - v.getY()) <= v.getHeight() / 2 && 0 <= Math.abs(x - v.getX()) && Math.abs(x - v.getX()) <= v.getWidth() / 2)
+            if (    0 <= Math.abs(y - v.getY()) &&
+                    Math.abs(y - v.getY()) <= v.getHeight() / 2 &&
+                    0 <= Math.abs(x - v.getX()) &&
+                    Math.abs(x - v.getX()) <= v.getWidth() / 2 ||
+                            0 <= Math.abs(y - v.getSign().getY()) &&
+                            Math.abs(y - v.getSign().getY()) <= v.getSign().getHeight() / 2 &&
+                            0 <= Math.abs(x - v.getSign().getX()) &&
+                            Math.abs(x - v.getSign().getX()) <= v.getSign().getWidth() / 2)
                 return v;
         }
 
@@ -433,6 +481,7 @@ public class Graph {
                 v.getSign().setWidth(Sign.SIGN_WIDTH);
                 v.getSign().setHeight(Sign.SIGN_HEIGHT);
             }
+
             for (Vertex[] del : deleted) {
                 del[0].addChild(del[1]);
                 del[1].addChild(del[0]);
@@ -472,5 +521,9 @@ public class Graph {
 
             this.convertCoordinates(true, type);
         }
+    }
+
+    public int getWindowSize() {
+        return this.SIZE;
     }
 }

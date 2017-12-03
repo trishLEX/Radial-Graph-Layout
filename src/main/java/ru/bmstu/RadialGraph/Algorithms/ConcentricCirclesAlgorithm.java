@@ -9,8 +9,7 @@ import static ru.bmstu.RadialGraph.Graph.Vertex.isIntersect;
 
 public final class ConcentricCirclesAlgorithm {
     private static double R;
-    private static final int WIDTH = GraphVisualization.WIDTH;
-    private static final int HEIGHT = GraphVisualization.HEIGHT;
+    private static final int SIZE = GraphVisualization.SIZE;
     private static final double RADIAL_COEFFICIENT = 0.9;
     private static final double R_OFFSET = Graph.R_OFFSET;
 
@@ -60,7 +59,7 @@ public final class ConcentricCirclesAlgorithm {
     }
 
     private static void addFirstRadii(Graph tree) {
-        R = (WIDTH < HEIGHT? WIDTH : HEIGHT)/ tree.getMaxDepth() / 2 * RADIAL_COEFFICIENT; //раньше радиус был константный
+        R = SIZE / tree.getMaxDepth() / 2 * RADIAL_COEFFICIENT; //раньше радиус был константный
         //R = 50.0;
         //tree.getRadials().add(R);
     }

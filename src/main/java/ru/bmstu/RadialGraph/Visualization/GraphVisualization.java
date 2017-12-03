@@ -8,8 +8,8 @@ import java.util.Scanner;
 public class GraphVisualization {
     private static int type;
 
-    public static int WIDTH = 720;
-    public static int HEIGHT = 720;
+    public final static int SIZE = 720;
+    public final static int MAX_SIZE = 1000;
 
     private static Graph makeGraph() {
         Scanner in = new Scanner(System.in);
