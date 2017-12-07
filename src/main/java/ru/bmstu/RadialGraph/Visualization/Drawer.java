@@ -71,6 +71,22 @@ class Drawer {
             else if (key == GLFW_KEY_D && action == GLFW_PRESS) {
                 toDrawDeleted = !toDrawDeleted;
             }
+            else if (key == GLFW_KEY_1 && action == GLFW_PRESS) {
+                this.type = 1;
+                this.graph.rebuild(1);
+            }
+            else if (key == GLFW_KEY_2 && action == GLFW_PRESS) {
+                this.type = 2;
+                this.graph.rebuild(2);
+            }
+            else if (key == GLFW_KEY_3 && action == GLFW_PRESS) {
+                this.type = 3;
+                this.graph.rebuild(3);
+            }
+            else if (key == GLFW_KEY_4 && action == GLFW_PRESS) {
+                this.type = 4;
+                this.graph.rebuild(4);
+            }
         }));
 
         glfwSetCursorPosCallback(window, GLFWCursorPosCallback.create((window, xpos, ypos) -> {
@@ -81,7 +97,7 @@ class Drawer {
         glfwSetMouseButtonCallback(window, GLFWMouseButtonCallback.create((window, button, action, mods) -> {
             if (button == GLFW_MOUSE_BUTTON_1 && action == GLFW_PRESS) {
                 System.out.println("x = " + cursorX / 2 * SIZE + " y = " + cursorY / 2 * SIZE);
-                this.graph.rebuild(cursorX, cursorY, type);
+                this.graph.rebuild(cursorX, cursorY, this.type);
             }
         }));
     }

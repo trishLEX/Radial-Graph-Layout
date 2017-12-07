@@ -287,12 +287,33 @@ public class Vertex {
             v.moveFromParent(vector);
     }
 
-    public static boolean isIntersect(Vertex v, Vertex u) {
-        return v.isIn(u) || u.isIn(v);
+    public boolean isIntersect(Vertex v) {
+        return v.isIn(this) || this.isIn(v);
     }
 
     public void addChild(Vertex v) {
         if (!this.child.contains(v))
             this.child.add(v);
+    }
+
+    public void clear() {
+        this.setVertexByCartesian(0, 0);
+
+        if (this.getParent() != null) {
+            this.addChild(this.getParent());
+            this.setParent(null);
+        }
+
+        this.setDepth(0);
+        this.setRoot(false);
+        this.setMark(0);
+
+        this.setWidth(Vertex.VERTEX_WIDTH);
+        this.setHeight(Vertex.VERTEX_HEIGHT);
+
+        this.getSign().setX(this.getX());
+        this.getSign().setY(this.getY() - this.getHeight() / 2);
+        this.getSign().setWidth(Sign.SIGN_WIDTH);
+        this.getSign().setHeight(Sign.SIGN_HEIGHT);
     }
 }

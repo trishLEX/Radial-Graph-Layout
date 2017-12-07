@@ -4,8 +4,6 @@ import ru.bmstu.RadialGraph.Graph.*;
 
 import java.util.ArrayList;
 
-import static ru.bmstu.RadialGraph.Graph.Vertex.isIntersect;
-
 public final class ParentCenteredAlgorithm {
     private static final double R = 100;
     private static final double PHI = Math.PI;
@@ -109,7 +107,7 @@ public final class ParentCenteredAlgorithm {
 
         for (Vertex v: tree.getVertices()){
             for (Vertex u: tree.getVertices()) {
-                if (v != u && isIntersect(v, u)) {
+                if (v != u && v.isIntersect(u)) {
                     makeRadialOffsetWithoutIntersections(v, u);
                 }
             }
@@ -142,7 +140,7 @@ public final class ParentCenteredAlgorithm {
 
         double offset = 0.0;
 
-        while (isIntersect(v, u)) {
+        while (v.isIntersect(u)) {
             for (Vertex w: vP.getChild()) {
                 offset += R_OFFSET;
                 w.moveFromParent(R_OFFSET);
@@ -159,7 +157,7 @@ public final class ParentCenteredAlgorithm {
         boolean wasIntersection = false;
 
         for (Vertex u: vertices) {
-            while (isIntersect(v, u)) {
+            while (v.isIntersect(u)) {
                 wasIntersection = true;
                 offset += R_OFFSET;
                 u.moveFromParent(R_OFFSET);
@@ -185,8 +183,6 @@ public final class ParentCenteredAlgorithm {
         Vertex root = tree.getRoot();
 
         System.out.println("Root is found: " + root);
-
-        tree.calculateMaxDepth(root);
 
         System.out.println("Max depth is found: " + tree.getMaxDepth());
 

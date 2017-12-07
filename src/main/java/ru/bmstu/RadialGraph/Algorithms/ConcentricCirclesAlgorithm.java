@@ -5,8 +5,6 @@ import ru.bmstu.RadialGraph.Visualization.GraphVisualization;
 
 import java.util.ArrayList;
 
-import static ru.bmstu.RadialGraph.Graph.Vertex.isIntersect;
-
 public final class ConcentricCirclesAlgorithm {
     private static double R;
     private static final int SIZE = GraphVisualization.SIZE;
@@ -32,7 +30,7 @@ public final class ConcentricCirclesAlgorithm {
         boolean wasIntersection = false;
 
         for (Vertex u: vertices) {
-            while (isIntersect(v, u)) {
+            while (v.isIntersect(u)) {
                 wasIntersection = true;
                 offset += R_OFFSET;
                 u.setVertexByPolar(u.getR() + R_OFFSET, u.getAngle());
@@ -60,8 +58,6 @@ public final class ConcentricCirclesAlgorithm {
 
     private static void addFirstRadii(Graph tree) {
         R = SIZE / tree.getMaxDepth() / 2 * RADIAL_COEFFICIENT; //раньше радиус был константный
-        //R = 50.0;
-        //tree.getRadials().add(R);
     }
 
     private static int leavesCount = 0;
@@ -119,8 +115,6 @@ public final class ConcentricCirclesAlgorithm {
         Vertex root = tree.getRoot();
 
         System.out.println("Root is found: " + root);
-
-        tree.calculateMaxDepth(root);
 
         System.out.println("Max depth is found: " + tree.getMaxDepth());
 

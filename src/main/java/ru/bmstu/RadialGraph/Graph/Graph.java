@@ -9,7 +9,7 @@ import ru.bmstu.RadialGraph.Visualization.GraphVisualization;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Scanner;
-//TODO сделать метод получние всех вершин без определённой
+
 public class Graph {
     public final static double R_OFFSET = 1.0;
 
@@ -130,7 +130,7 @@ public class Graph {
         }
     }
 
-    public void calculateMaxDepth(Vertex root) {
+    private void calculateMaxDepth(Vertex root) {
         calculateMaxDepth(root, 0);
 
         ArrayList<ArrayList<Vertex>> verticesByDepth = new ArrayList<>();
@@ -193,8 +193,6 @@ public class Graph {
 
         bfs(v);
 
-        checkForConnections();
-
         ArrayList<Vertex[]> deleted = new ArrayList<>();
 
         for (Vertex vertex: vertices) {
@@ -213,6 +211,12 @@ public class Graph {
             }
             vertex.setChild(temp);
         }
+
+        System.out.println(this);
+
+        calculateMaxDepth(this.root);
+
+        checkForConnections();
 
         this.deleted = deleted;
     }
@@ -374,10 +378,17 @@ public class Graph {
             }
         }
 
-        translateRight(left);
-        translateLeft(left);
-        translateDown(up);
-        translateUp(up);
+        System.out.println("width = " + width + " height = " + height + " right = " + right + " left = " + left + " up = " + up + " down = " + down);
+
+        if (left < - SIZE / 2 || right > SIZE / 2) {
+            translateRight(left);
+            translateLeft(left);
+        }
+
+        if (down < - SIZE / 2 || up > SIZE / 2) {
+            translateDown(up);
+            translateUp(up);
+        }
     }
 
     private void translateLeft(double left) {
@@ -461,66 +472,70 @@ public class Graph {
         System.out.println("new root is " + newRoot);
 
         if (newRoot != null) {
+            this.root = newRoot;
+
             for (Vertex v : vertices) {
-                v.setVertexByCartesian(0, 0);
-
-                if (v.getParent() != null) {
-                    v.addChild(v.getParent());
-                    v.setParent(null);
-                }
-
-                v.setDepth(0);
-                v.setRoot(false);
-                v.setMark(0);
-
-                v.setWidth(Vertex.VERTEX_WIDTH);
-                v.setHeight(Vertex.VERTEX_HEIGHT);
-
-                v.getSign().setX(v.getX());
-                v.getSign().setY(y - v.getHeight() / 2);
-                v.getSign().setWidth(Sign.SIGN_WIDTH);
-                v.getSign().setHeight(Sign.SIGN_HEIGHT);
+                v.clear();
             }
 
-            for (Vertex[] del : deleted) {
-                del[0].addChild(del[1]);
-                del[1].addChild(del[0]);
-            }
+            this.clear();
 
-            this.deleted.clear();
-            this.radials.clear();
-            this.verticesByDepth.clear();
-            this.center.clear();
-            this.maxDepth = 0;
-
-            makeTree(newRoot);
-            System.out.println(this);
-            System.out.println("Tree is built");
-
-            if (type == 1) {
-                ParentCenteredAlgorithm.useAlgorithm(this);
-                CentralityDrawingAlgorithm.useAlgorithm(this);
-            }
-            else if (type == 2) {
-                ConcentricCirclesAlgorithm.useAlgorithm(this);
-                CentralityDrawingAlgorithm.useAlgorithm(this);
-            }
-            else if (type == 3)
-                ParentCenteredAlgorithm.useAlgorithm(this);
-            else if (type == 4)
-                ConcentricCirclesAlgorithm.useAlgorithm(this);
-
-            System.out.println(this);
-
-            System.out.println("RADIALS " + this.radials);
-
-            for (Vertex v: this.getVertices()) {
-                System.out.println("COORDINATES " + v.getIndex() + " (" + v.getX() + "," + v.getY() + ") w = " + v.getWidth() + " h = " + v.getHeight());
-                System.out.println("            " + "sign: (" + v.getSign().getX() + "," + v.getSign().getY() + ") w = " + v.getSign().getWidth() + " h = " + v.getSign().getHeight());
-            }
-
-            this.convertCoordinates(true, type);
+            useAlgorithm(type);
         }
+    }
+
+    public void rebuild(int type) {
+            for (Vertex v : vertices) {
+                v.clear();
+            }
+
+            this.clear();
+
+            useAlgorithm(type);
+    }
+
+    private void useAlgorithm(int type) {
+        makeTree(this.root);
+        System.out.println(this);
+        System.out.println("Tree is built");
+        System.out.println("TYPE = " + type);
+
+        if (type == 1) {
+            ParentCenteredAlgorithm.useAlgorithm(this);
+            CentralityDrawingAlgorithm.useAlgorithm(this);
+        } else if (type == 2) {
+            ConcentricCirclesAlgorithm.useAlgorithm(this);
+            CentralityDrawingAlgorithm.useAlgorithm(this);
+        } else if (type == 3)
+            ParentCenteredAlgorithm.useAlgorithm(this);
+        else if (type == 4)
+            ConcentricCirclesAlgorithm.useAlgorithm(this);
+        else throw new RuntimeException("Wrong number of Algorithm");
+
+
+        System.out.println(this);
+
+        System.out.println("RADIALS " + this.radials);
+
+        for (Vertex v : this.getVertices()) {
+            System.out.println("COORDINATES " + v.getIndex() + " (" + v.getX() + "," + v.getY() + ") w = " + v.getWidth() + " h = " + v.getHeight());
+            System.out.println("            " + "sign: (" + v.getSign().getX() + "," + v.getSign().getY() + ") w = " + v.getSign().getWidth() + " h = " + v.getSign().getHeight());
+        }
+
+        this.convertCoordinates(true, type);
+    }
+
+    private void clear() {
+        for (Vertex[] del : deleted) {
+            del[0].addChild(del[1]);
+            del[1].addChild(del[0]);
+        }
+
+        this.deleted.clear();
+        this.radials.clear();
+        this.verticesByDepth.clear();
+        this.center.clear();
+        this.maxDepth = 0;
     }
 
     public int getWindowSize() {
