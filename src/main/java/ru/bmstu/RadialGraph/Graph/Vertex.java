@@ -86,10 +86,6 @@ public class Vertex {
         return index;
     }
 
-    public void setIndex(int index) {
-        this.index = index;
-    }
-
     public boolean isRoot() {
         return isRoot;
     }
@@ -140,10 +136,6 @@ public class Vertex {
 
     public Sign getSign() {
         return this.sign;
-    }
-
-    public void setSign(Sign sign) {
-        this.sign = sign;
     }
 
     private ArrayList<Double[]> getPoints() {

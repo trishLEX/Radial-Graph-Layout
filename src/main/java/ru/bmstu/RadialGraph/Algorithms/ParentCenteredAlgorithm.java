@@ -69,7 +69,7 @@ public final class ParentCenteredAlgorithm {
                         v.setAngle(Math.PI - PHI / 2 + PHI * v.getParent().getChild().indexOf(v) / v.getParent().getChild().size() + PHI / (2 * v.getParent().getChild().size()));
 
                         if (v.getParent().getParent().getChild().size() == 1) {
-                            v.setR(v.getParent().getR()); //здесь было R / 2
+                            v.setR(v.getParent().getR());
                         }
 
                         else {
@@ -94,8 +94,7 @@ public final class ParentCenteredAlgorithm {
                 makeRadialOffsetWithoutIntersections(v, v.getChild());
 
                 for (Vertex u : v.getChild()) {
-                    ArrayList<Vertex> siblingsOfU = new ArrayList<>();
-                    siblingsOfU.addAll(v.getChild());
+                    ArrayList<Vertex> siblingsOfU = new ArrayList<>(v.getChild());
                     siblingsOfU.remove(u);
 
                     makeRadialOffsetWithoutIntersections(u, siblingsOfU);

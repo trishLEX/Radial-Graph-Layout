@@ -13,8 +13,7 @@ public final class ConcentricCirclesAlgorithm {
 
     private static void deleteIntersections(Graph tree) {
         for (Vertex v: tree.getVertices()) {
-            ArrayList<Vertex> currentDepthWithoutV = new ArrayList<>();
-            currentDepthWithoutV.addAll(tree.getVerticesByDepth(v.getDepth()));
+            ArrayList<Vertex> currentDepthWithoutV = new ArrayList<>(tree.getVerticesByDepth(v.getDepth()));
             currentDepthWithoutV.remove(v);
 
             makeRadialOffsetWithoutIntersections(v, currentDepthWithoutV, tree);
@@ -57,7 +56,7 @@ public final class ConcentricCirclesAlgorithm {
     }
 
     private static void addFirstRadii(Graph tree) {
-        R = SIZE / tree.getMaxDepth() / 2 * RADIAL_COEFFICIENT; //раньше радиус был константный
+        R = SIZE / tree.getMaxDepth() / 2 * RADIAL_COEFFICIENT;
     }
 
     private static int leavesCount = 0;
