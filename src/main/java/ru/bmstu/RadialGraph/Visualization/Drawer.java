@@ -33,6 +33,7 @@ class Drawer {
 
     private boolean toDrawRadials = true;
     private boolean toDrawDeleted = false;
+    private boolean toDrawSigns = true;
 
     private void background() {
         glClearColor(1, 1, 1, 0);
@@ -87,6 +88,9 @@ class Drawer {
                 this.type = 4;
                 this.graph.rebuild(4);
             }
+            else if (key == GLFW_KEY_S && action == GLFW_PRESS) {
+                toDrawSigns = !toDrawSigns;
+            }
         }));
 
         glfwSetCursorPosCallback(window, GLFWCursorPosCallback.create((window, xpos, ypos) -> {
@@ -131,26 +135,28 @@ class Drawer {
         }
         glEnd();
 
-        Sign sign = v.getSign();
-        double sx = sign.getX();
-        double sy = sign.getY();
-        double sWidth = sign.getWidth();
-        double sHeight = sign.getHeight();
+        if (toDrawSigns) {
+            Sign sign = v.getSign();
+            double sx = sign.getX();
+            double sy = sign.getY();
+            double sWidth = sign.getWidth();
+            double sHeight = sign.getHeight();
 
 
-        glBegin(GL_LINE_LOOP);
-        {
-            glColor3dv(BLACK);
-            drawQuads(sx, sy, sWidth, sHeight);
+            glBegin(GL_LINE_LOOP);
+            {
+                glColor3dv(BLACK);
+                drawQuads(sx, sy, sWidth, sHeight);
+            }
+            glEnd();
+
+            glBegin(GL_QUADS);
+            {
+                glColor3dv(WHITE);
+                drawQuads(sx, sy, sWidth, sHeight);
+            }
+            glEnd();
         }
-        glEnd();
-
-        glBegin(GL_QUADS);
-        {
-            glColor3dv(WHITE);
-            drawQuads(sx, sy, sWidth, sHeight);
-        }
-        glEnd();
     }
 
     private void drawLine(Vertex v1, Vertex v2) {

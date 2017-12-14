@@ -26,6 +26,7 @@ public class Graph {
     private int maxDepth;
     private ArrayList<Vertex> center;
     private int radii;
+    private boolean isRedraw;
 
     private boolean incompatibility = false;
 
@@ -46,6 +47,7 @@ public class Graph {
         this.verticesByDepth = new ArrayList<>();
         this.root = null;
         this.deleted = new ArrayList<>();
+        this.isRedraw = false;
     }
 
     public ArrayList<Vertex> getVertices() {
@@ -187,7 +189,10 @@ public class Graph {
             throw new RuntimeException("The number of connected component is more than one");
     }
 
-    public void makeTree(Vertex v) {
+    private void makeTree(Vertex v) {
+        if (v == null)
+            v = this.center.get(0);
+
         v.setRoot(true);
         this.root = v;
 
@@ -339,7 +344,7 @@ public class Graph {
             double side = width > height ? width : height;
 
             if (!isRedraw) {
-                SIZE = (int) side + 1;
+                SIZE = (int) side + 150;
 
                 if (width > MAX_SIZE || height > MAX_SIZE) {
                     incompatibility = true;
@@ -479,6 +484,7 @@ public class Graph {
             }
 
             this.clear();
+            this.isRedraw = true;
 
             useAlgorithm(type);
         }
@@ -490,12 +496,13 @@ public class Graph {
             }
 
             this.clear();
+            this.isRedraw = true;
 
             useAlgorithm(type);
     }
 
-    private void useAlgorithm(int type) {
-        makeTree(this.root);
+    public void useAlgorithm(int type) {
+        this.makeTree(this.root);
         System.out.println(this);
         System.out.println("Tree is built");
         System.out.println("TYPE = " + type);
@@ -506,11 +513,11 @@ public class Graph {
         } else if (type == 2) {
             ConcentricCirclesAlgorithm.useAlgorithm(this);
             CentralityDrawingAlgorithm.useAlgorithm(this);
-        } else if (type == 3)
+        } else if (type == 3) {
             ParentCenteredAlgorithm.useAlgorithm(this);
-        else if (type == 4)
+        } else if (type == 4) {
             ConcentricCirclesAlgorithm.useAlgorithm(this);
-        else throw new RuntimeException("Wrong number of Algorithm");
+        } else throw new RuntimeException("Wrong number of Algorithm");
 
 
         System.out.println(this);
@@ -522,7 +529,7 @@ public class Graph {
             System.out.println("            " + "sign: (" + v.getSign().getX() + "," + v.getSign().getY() + ") w = " + v.getSign().getWidth() + " h = " + v.getSign().getHeight());
         }
 
-        this.convertCoordinates(true, type);
+        this.convertCoordinates(isRedraw, type);
     }
 
     private void clear() {

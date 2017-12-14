@@ -1,6 +1,5 @@
 package ru.bmstu.RadialGraph.Visualization;
 
-import ru.bmstu.RadialGraph.Calculation.Calculation;
 import ru.bmstu.RadialGraph.Graph.*;
 
 import java.util.Scanner;
@@ -30,9 +29,7 @@ public class GraphVisualization {
 
         System.out.println("Graph is scanned");
 
-        Calculation calc = new Calculation(graph);
-
-        graph = calc.calculateGraph(type);
+        graph.useAlgorithm(type);
 
         System.out.println("Graph is calculated");
 

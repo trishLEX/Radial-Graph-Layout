@@ -135,8 +135,6 @@ public final class ParentCenteredAlgorithm {
             uP = tempU.getParent();
         }
 
-        System.out.println("General ancestor is found");
-
         double offset = 0.0;
 
         while (v.isIntersect(u)) {

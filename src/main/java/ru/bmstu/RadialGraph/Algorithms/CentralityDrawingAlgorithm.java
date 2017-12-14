@@ -8,7 +8,7 @@ import java.util.ArrayList;
 
 public final class CentralityDrawingAlgorithm {
     private static final int LENGTH_OF_EDGE = 100;
-    private static final int NUMBER_OF_ITERATIONS = 10000;
+    private static final int NUMBER_OF_ITERATIONS = 1000;
 
     private static double b(Vertex u, Vertex v) {
         double norm = v.distTo(u);
