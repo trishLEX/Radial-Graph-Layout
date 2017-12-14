@@ -137,8 +137,14 @@ public final class ParentCenteredAlgorithm {
 
         double offset = 0.0;
 
-        while (v.isIntersect(u)) {
+        boolean wasBreaked = false;
+
+        while (v.isIntersect(u) && !wasBreaked) {
             for (Vertex w: vP.getChild()) {
+                if (v.getX() == w.getX() && v.getY() == w.getY()) {
+                    wasBreaked = true;
+                    break;
+                }
                 offset += R_OFFSET;
                 w.moveFromParent(R_OFFSET);
             }
@@ -155,6 +161,8 @@ public final class ParentCenteredAlgorithm {
 
         for (Vertex u: vertices) {
             while (v.isIntersect(u)) {
+                if (v.getX() == u.getX() && v.getY() == u.getY())
+                    break;
                 wasIntersection = true;
                 offset += R_OFFSET;
                 u.moveFromParent(R_OFFSET);

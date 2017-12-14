@@ -400,8 +400,8 @@ public class Graph {
         double offset = 0.0;
 
         while (left > - (double) SIZE / 2.0 + 1.0) {
-            left -= 1.0;
-            offset -= 1.0;
+            left -= 0.5;
+            offset -= 0.5;
         }
 
         for (Vertex v: this.vertices) {
@@ -415,8 +415,8 @@ public class Graph {
         double offset = 0.0;
 
         while (left < - (double) SIZE / 2.0 + 1.0) {
-            left += 1.0;
-            offset += 1.0;
+            left += 0.5;
+            offset += 0.5;
         }
 
         for (Vertex v: this.vertices) {
@@ -428,8 +428,8 @@ public class Graph {
         double offset = 0.0;
 
         while (up > (double) SIZE / 2.0 - 1.0) {
-            up -= 1.0;
-            offset -= 1.0;
+            up -= 0.5;
+            offset -= 0.5;
         }
 
         for (Vertex v: this.vertices) {
@@ -440,9 +440,9 @@ public class Graph {
     private void translateUp(double up) {
         double offset = 0.0;
 
-        while (up < (double) SIZE / 2.0 - 1) {
-            up += 1.0;
-            offset += 1.0;
+        while (up < (double) SIZE / 2.0 - 1.0) {
+            up += 0.5;
+            offset += 0.5;
         }
 
         for (Vertex v: this.vertices) {
