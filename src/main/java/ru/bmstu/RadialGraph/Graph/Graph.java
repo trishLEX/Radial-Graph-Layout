@@ -1,5 +1,6 @@
 package ru.bmstu.RadialGraph.Graph;
 
+import org.joml.Vector2d;
 import ru.bmstu.RadialGraph.Algorithms.CentralityDrawingAlgorithm;
 import ru.bmstu.RadialGraph.Algorithms.ConcentricCirclesAlgorithm;
 import ru.bmstu.RadialGraph.Algorithms.ParentCenteredAlgorithm;
@@ -314,7 +315,7 @@ public class Graph {
             left = Math.min(v.getSign().getX() - v.getSign().getWidth() / 2, left);
         }
 
-        return new double[] {up, down, right, left, right - left, up - down};
+        return new double[] {up + 5, down - 5, right + 5, left - 5, right - left + 10, up - down + 10};
     }
 
     private void resizeCoords(double coefficient, int type) {
@@ -350,47 +351,26 @@ public class Graph {
             if (!isRedraw) {
                 SIZE = (int) side + 1;
 
-                if (side > MAX_SIZE) {
+                if (side > MAX_SIZE)
                     SIZE = MAX_SIZE;
-                    double resizeCoeff = SIZE / side;
-
-                    resizeCoords(resizeCoeff, type);
-
-                    up *= resizeCoeff;
-                    left *= resizeCoeff;
-                    right *= resizeCoeff;
-                    down *= resizeCoeff;
-                    width *= resizeCoeff;
-                    height *= resizeCoeff;
-                }
-
-            } else {
-                double resizeCoeff = SIZE / side;
-
-                resizeCoords(resizeCoeff, type);
-
-                corners = findCorners();
-
-                up = corners[0];
-                down = corners[1];
-                right = corners[2];
-                left = corners[3];
-                width = corners[4];
-                height = corners[5];
             }
+
+            double resizeCoeff = SIZE / side;
+
+            resizeCoords(resizeCoeff, type);
         }
 
+        corners = findCorners();
+        up = corners[0];
+        down = corners[1];
+        right = corners[2];
+        left = corners[3];
+        width = corners[4];
+        height = corners[5];
         System.out.println("width = " + width + " height = " + height + " right = " + right + " left = " + left + " up = " + up + " down = " + down);
 
-        if (left < - SIZE / 2 || right > SIZE / 2) {
-            translateRight(left);
-            translateLeft(left);
-        }
-
-        if (down < - SIZE / 2 || up > SIZE / 2) {
-            translateDown(up);
-            translateUp(up);
-        }
+        Vector2d vectorToCenter = new Vector2d(-(left + right) / 2, -(down + up) / 2);
+        translate(vectorToCenter);
 
         corners = findCorners();
         up = corners[0];
@@ -402,60 +382,10 @@ public class Graph {
         System.out.println("width = " + width + " height = " + height + " right = " + right + " left = " + left + " up = " + up + " down = " + down);
     }
 
-    private void translateLeft(double left) {
-        double offset = 0.0;
-
-        while (left > - (double) SIZE / 2.0) {
-            left -= 0.1;
-            offset -= 0.1;
+    private void translate(Vector2d w) {
+        for (Vertex v: vertices) {
+            v.translate(w);
         }
-
-        for (Vertex v: this.vertices) {
-            v.setX(v.getX() + offset);
-        }
-
-        System.out.println("left = " + left);
-    }
-
-    private void translateRight(double left) {
-        double offset = 0.0;
-
-        while (left < - (double) SIZE / 2.0) {
-            left += 0.1;
-            offset += 0.1;
-        }
-
-        for (Vertex v: this.vertices) {
-            v.setX(v.getX() + offset);
-        }
-    }
-
-    private void translateDown(double up) {
-        double offset = 0.0;
-
-        while (up > (double) SIZE / 2.0) {
-            up -= 0.1;
-            offset -= 0.1;
-        }
-
-        for (Vertex v: this.vertices) {
-            v.setY(v.getY() + offset);
-        }
-    }
-
-    private void translateUp(double up) {
-        double offset = 0.0;
-
-        while (up < (double) SIZE / 2.0) {
-            up += 0.1;
-            offset += 0.1;
-        }
-
-        for (Vertex v: this.vertices) {
-            v.setY(v.getY() + offset);
-        }
-
-        System.out.println("up = " + up);
     }
 
     private Vertex findVertex(double x, double y) {

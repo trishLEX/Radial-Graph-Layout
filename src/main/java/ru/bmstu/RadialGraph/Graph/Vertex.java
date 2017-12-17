@@ -252,7 +252,7 @@ public class Vertex {
     }
 
     public void moveFromParent(double offset) {
-        Vector2d pc = new Vector2d(this.getX() - this.getParent().getX(), this.getY() - this.getParent().getY());
+        Vector2d pc = new Vector2d(this.x - this.parent.x, this.y - this.parent.y);
         Vector2d temp = new Vector2d(pc.x, pc.y);
         double pcLength = pc.length();
 
@@ -262,10 +262,10 @@ public class Vertex {
         pcLength = (pcLength + offset) / pcLength; //теперь pcLength - коэффициент растяжения
         pc.mul(pcLength);
 
-        if (Double.isNaN(this.getParent().getX() + pc.x) || Double.isNaN(this.getParent().getY() + pc.y))
+        if (Double.isNaN(this.parent.x + pc.x) || Double.isNaN(this.parent.y + pc.y))
             throw new RuntimeException("NaN coordinates" + this.getParent().getX() + "+" + pc.x + " , " + this.getParent().getY() + "+" + pc.y + " this = " + this);
 
-        this.setVertexByCartesian(this.getParent().getX() + pc.x, this.getParent().getY() + pc.y);
+        this.setVertexByCartesian(this.parent.x + pc.x, this.parent.y + pc.y);
 
         pc.sub(temp);
 
@@ -291,7 +291,7 @@ public class Vertex {
     public void clear() {
         this.setVertexByCartesian(0, 0);
 
-        if (this.getParent() != null) {
+        if (this.parent != null) {
             this.addChild(this.getParent());
             this.setParent(null);
         }
@@ -307,5 +307,10 @@ public class Vertex {
         this.getSign().setY(this.getY() - this.getHeight() / 2);
         this.getSign().setWidth(Sign.SIGN_WIDTH);
         this.getSign().setHeight(Sign.SIGN_HEIGHT);
+    }
+
+    public void translate(Vector2d w) {
+        this.setX(x + w.x);
+        this.setY(y + w.y);
     }
 }
