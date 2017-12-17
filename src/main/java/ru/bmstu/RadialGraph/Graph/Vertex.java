@@ -6,8 +6,9 @@ import java.util.ArrayList;
 
 /* x и y - координаты центра вершины */
 public class Vertex {
-    static final double VERTEX_WIDTH = 10.0;
-    static final double VERTEX_HEIGHT = 10.0;
+    public static final double VERTEX_WIDTH = 10.0;
+    public static final double VERTEX_HEIGHT = 10.0;
+    public static final int SIZE_OF_LETTER = 11;
 
     private ArrayList<Vertex> child;
     private Vertex parent;

@@ -15,6 +15,7 @@ public class Graph {
     public final static double R_OFFSET = 1.0;
 
     private final static int MAX_SIZE = GraphVisualization.MAX_SIZE;
+    private final static boolean SIGNS = GraphVisualization.SIGNS;
 
     private int SIZE = GraphVisualization.SIZE;
 
@@ -28,8 +29,6 @@ public class Graph {
     private ArrayList<Vertex> center;
     private int radii;
     private boolean isRedraw;
-
-    private boolean incompatibility = false;
 
     public int getMaxDepth() {
         return maxDepth;
@@ -61,6 +60,21 @@ public class Graph {
 
     public void scanGraph(Scanner in) {
         int m = in.nextInt();
+
+        if (SIGNS) {
+            for (int i = 0; i < size; i++) {
+                String sign = in.nextLine();
+                String[] words = sign.split(" ");
+                int width = 0;
+                int height = sign.length() == 0 ? 0 : words.length;
+                for (String word: words) {
+                    width = Math.max(word.length(), width);
+                }
+
+                vertices.get(i).getSign().setWidth(width * Vertex.SIZE_OF_LETTER + (width == 0 ? 0 : 3));
+                vertices.get(i).getSign().setHeight(height * (Vertex.SIZE_OF_LETTER + 3));
+            }
+        }
 
         for (int i = 0; i < m; i++) {
             int x = in.nextInt();

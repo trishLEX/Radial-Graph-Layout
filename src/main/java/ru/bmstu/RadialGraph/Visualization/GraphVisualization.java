@@ -9,6 +9,7 @@ public class GraphVisualization {
 
     public final static int SIZE = 720;
     public final static int MAX_SIZE = 1000;
+    public final static boolean SIGNS = false;
 
     private static Graph makeGraph() {
         Scanner in = new Scanner(System.in);
