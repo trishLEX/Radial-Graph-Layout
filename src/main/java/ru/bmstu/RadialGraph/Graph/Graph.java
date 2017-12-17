@@ -320,6 +320,10 @@ public class Graph {
     private void resizeCoords(double coefficient, int type) {
         for (Vertex v : vertices) {
             v.setVertexByCartesian(v.getX() * coefficient, v.getY() * coefficient);
+            v.setHeight(v.getHeight() * coefficient);
+            v.setWidth(v.getWidth() * coefficient);
+            v.getSign().setHeight(v.getSign().getHeight() * coefficient);
+            v.getSign().setWidth(v.getSign().getWidth() * coefficient);
         }
 
         if (type == 3)
@@ -344,13 +348,9 @@ public class Graph {
             double side = width > height ? width : height;
 
             if (!isRedraw) {
-                SIZE = (int) side + 150;
+                SIZE = (int) side + 1;
 
-                if (width > MAX_SIZE || height > MAX_SIZE) {
-                    incompatibility = true;
-                }
-
-                if (incompatibility) {
+                if (side > MAX_SIZE) {
                     SIZE = MAX_SIZE;
                     double resizeCoeff = SIZE / side;
 
@@ -364,8 +364,7 @@ public class Graph {
                     height *= resizeCoeff;
                 }
 
-            }
-            else {
+            } else {
                 double resizeCoeff = SIZE / side;
 
                 resizeCoords(resizeCoeff, type);
@@ -378,8 +377,6 @@ public class Graph {
                 left = corners[3];
                 width = corners[4];
                 height = corners[5];
-
-                System.out.println("width = " + width + " height = " + height + " right = " + right + " left = " + left + " up = " + up + " down = " + down);
             }
         }
 
@@ -394,14 +391,23 @@ public class Graph {
             translateDown(up);
             translateUp(up);
         }
+
+        corners = findCorners();
+        up = corners[0];
+        down = corners[1];
+        right = corners[2];
+        left = corners[3];
+        width = corners[4];
+        height = corners[5];
+        System.out.println("width = " + width + " height = " + height + " right = " + right + " left = " + left + " up = " + up + " down = " + down);
     }
 
     private void translateLeft(double left) {
         double offset = 0.0;
 
-        while (left > - (double) SIZE / 2.0 + 1.0) {
-            left -= 0.5;
-            offset -= 0.5;
+        while (left > - (double) SIZE / 2.0) {
+            left -= 0.1;
+            offset -= 0.1;
         }
 
         for (Vertex v: this.vertices) {
@@ -414,9 +420,9 @@ public class Graph {
     private void translateRight(double left) {
         double offset = 0.0;
 
-        while (left < - (double) SIZE / 2.0 + 1.0) {
-            left += 0.5;
-            offset += 0.5;
+        while (left < - (double) SIZE / 2.0) {
+            left += 0.1;
+            offset += 0.1;
         }
 
         for (Vertex v: this.vertices) {
@@ -427,9 +433,9 @@ public class Graph {
     private void translateDown(double up) {
         double offset = 0.0;
 
-        while (up > (double) SIZE / 2.0 - 1.0) {
-            up -= 0.5;
-            offset -= 0.5;
+        while (up > (double) SIZE / 2.0) {
+            up -= 0.1;
+            offset -= 0.1;
         }
 
         for (Vertex v: this.vertices) {
@@ -440,9 +446,9 @@ public class Graph {
     private void translateUp(double up) {
         double offset = 0.0;
 
-        while (up < (double) SIZE / 2.0 - 1.0) {
-            up += 0.5;
-            offset += 0.5;
+        while (up < (double) SIZE / 2.0) {
+            up += 0.1;
+            offset += 0.1;
         }
 
         for (Vertex v: this.vertices) {

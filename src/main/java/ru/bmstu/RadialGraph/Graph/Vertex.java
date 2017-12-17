@@ -71,7 +71,7 @@ public class Vertex {
 
     public void setY(double y) {
         this.y = y;
-        this.sign.setY(y - VERTEX_HEIGHT / 2 - Sign.SIGN_HEIGHT / 2);
+        this.sign.setY(y - this.getHeight() / 2 - this.getSign().getHeight() / 2);
     }
 
     public int getMark() {

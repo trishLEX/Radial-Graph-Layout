@@ -55,6 +55,9 @@ class Drawer {
         final int SIZE = this.graph.getWindowSize();
 
         System.out.println("WINDOW size = " + SIZE);
+
+        glfwWindowHint(GLFW_RESIZABLE, GLFW_FALSE);
+
         this.window = GLFW.glfwCreateWindow(SIZE, SIZE, NAME, 0, 0);
 
         if (window == 0) {
