@@ -335,10 +335,10 @@ public class Graph {
     private void resizeCoords(double coefficient, int type) {
         for (Vertex v : vertices) {
             v.setVertexByCartesian(v.getX() * coefficient, v.getY() * coefficient);
-            v.setHeight(v.getHeight() * coefficient);
-            v.setWidth(v.getWidth() * coefficient);
-            v.getSign().setHeight(v.getSign().getHeight() * coefficient);
-            v.getSign().setWidth(v.getSign().getWidth() * coefficient);
+            //v.setHeight(v.getHeight() * coefficient);
+            //v.setWidth(v.getWidth() * coefficient);
+            //v.getSign().setHeight(v.getSign().getHeight() * coefficient);
+            //v.getSign().setWidth(v.getSign().getWidth() * coefficient);
         }
 
         if (type == 3)
@@ -363,7 +363,7 @@ public class Graph {
             double side = width > height ? width : height;
 
             if (!isRedraw) {
-                SIZE = (int) side + 1;
+                SIZE = (int) side + 150;
 
                 if (side > MAX_SIZE)
                     SIZE = MAX_SIZE;
