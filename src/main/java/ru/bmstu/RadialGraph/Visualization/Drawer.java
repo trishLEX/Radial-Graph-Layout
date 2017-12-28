@@ -138,7 +138,7 @@ class Drawer {
         }
         glEnd();
 
-        if (toDrawSigns) {
+        if (toDrawSigns && v.getSign() != null) {
             Sign sign = v.getSign();
             double sx = sign.getX();
             double sy = sign.getY();

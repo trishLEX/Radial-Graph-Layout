@@ -16,7 +16,7 @@ public class GraphVisualization {
 
             int count = in.nextInt();
 
-            Graph graph = new Graph(count);
+            Graph graph = new Graph(count, isSigns);
 
             graph.scanGraph(in, isIndexFromOne, isSigns);
 
