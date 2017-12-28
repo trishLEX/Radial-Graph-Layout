@@ -76,6 +76,8 @@ public class Graph {
         for (int i = 0; i < m; i++) {
             int x = in.nextInt() - (isIndexFromOne ? 1 : 0);
             int y = in.nextInt() - (isIndexFromOne ? 1 : 0);
+            if (x < 0 || y < 0)
+                throw new RuntimeException("Indecies of vertex are negative");
 
             vertices.get(x).getChild().add(vertices.get(y));
             vertices.get(y).getChild().add(vertices.get(x));
