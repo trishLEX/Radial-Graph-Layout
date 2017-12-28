@@ -131,8 +131,6 @@ public final class ParentCenteredAlgorithm {
             uP = tempU.getParent();
         }
 
-        double offset = 0.0;
-
         boolean wasBreaked = false;
 
         while (v.isIntersect(u) && !wasBreaked) {
@@ -141,11 +139,8 @@ public final class ParentCenteredAlgorithm {
                     wasBreaked = true;
                     break;
                 }
-                offset += R_OFFSET;
                 w.moveFromParent(R_OFFSET);
             }
-            if (offset > 1000)
-                break;
         }
     }
 

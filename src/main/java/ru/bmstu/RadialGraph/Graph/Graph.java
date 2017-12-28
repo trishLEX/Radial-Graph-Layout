@@ -349,8 +349,6 @@ public class Graph {
         } else if (type == 4) {
             ConcentricCirclesAlgorithm.useAlgorithm(this);
         } else throw new RuntimeException("Wrong number of Algorithm");
-
-        //this.convertCoordinates(isRedraw, type);
     }
 
     private void clear() {
