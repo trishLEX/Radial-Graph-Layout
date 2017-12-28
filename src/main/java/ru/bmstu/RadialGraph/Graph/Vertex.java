@@ -22,7 +22,7 @@ public class Vertex {
     private double width, height;
     private Sign sign;
 
-    Vertex(int i) {
+    Vertex(int i, boolean isSigns) {
         this.child = new ArrayList<>();
         this.parent = null;
         this.x = this.y = 0;
@@ -38,7 +38,8 @@ public class Vertex {
         this.width = VERTEX_WIDTH;
         this.height = VERTEX_HEIGHT;
 
-        this.sign = new Sign(x, y - height / 2);
+        if (isSigns)
+            this.sign = new Sign(x, y - height / 2);
     }
 
     public ArrayList<Vertex> getChild() {
@@ -63,7 +64,8 @@ public class Vertex {
 
     public void setX(double x) {
         this.x = x;
-        this.sign.setX(x);
+        if (sign != null)
+            this.sign.setX(x);
     }
 
     public double getY() {
@@ -72,7 +74,8 @@ public class Vertex {
 
     public void setY(double y) {
         this.y = y;
-        this.sign.setY(y - this.getHeight() / 2 - this.getSign().getHeight() / 2);
+        if (sign != null)
+            this.sign.setY(y - this.getHeight() / 2 - this.getSign().getHeight() / 2);
     }
 
     public int getMark() {
@@ -142,10 +145,6 @@ public class Vertex {
     private ArrayList<Double[]> getPoints() {
         double width2 = this.width / 2;
         double height2 = this.height / 2;
-        double xs = this.sign.getX();
-        double ys = this.sign.getY();
-        double sWidth2 = this.sign.getWidth() / 2;
-        double sHeight2 = this.sign.getHeight() / 2;
 
         ArrayList<Double[]> thisPoints = new ArrayList<>();
 
@@ -154,10 +153,17 @@ public class Vertex {
         thisPoints.add(new Double[]{x - width2, y - height2});
         thisPoints.add(new Double[]{x + width2, y - height2});
 
-        thisPoints.add(new Double[]{xs - sWidth2, ys + sHeight2});
-        thisPoints.add(new Double[]{xs - sWidth2, ys - sHeight2});
-        thisPoints.add(new Double[]{xs + sWidth2, ys - sHeight2});
-        thisPoints.add(new Double[]{xs + sWidth2, ys + sHeight2});
+        if (sign != null) {
+            double xs = this.sign.getX();
+            double ys = this.sign.getY();
+            double sWidth2 = this.sign.getWidth() / 2;
+            double sHeight2 = this.sign.getHeight() / 2;
+
+            thisPoints.add(new Double[]{xs - sWidth2, ys + sHeight2});
+            thisPoints.add(new Double[]{xs - sWidth2, ys - sHeight2});
+            thisPoints.add(new Double[]{xs + sWidth2, ys - sHeight2});
+            thisPoints.add(new Double[]{xs + sWidth2, ys + sHeight2});
+        }
 
         return thisPoints;
     }
@@ -183,11 +189,13 @@ public class Vertex {
             }
         }
 
-        for (Double[] point: this.getPoints()) {
-            double px = point[0];
-            double py = point[1];
-            if (px <= vPoints.get(7)[0] && px >= vPoints.get(4)[0] && py <= vPoints.get(7)[1] && py >= vPoints.get(6)[1]) {
-                return true;
+        if (sign != null) {
+            for (Double[] point : this.getPoints()) {
+                double px = point[0];
+                double py = point[1];
+                if (px <= vPoints.get(7)[0] && px >= vPoints.get(4)[0] && py <= vPoints.get(7)[1] && py >= vPoints.get(6)[1]) {
+                    return true;
+                }
             }
         }
 
@@ -304,10 +312,12 @@ public class Vertex {
         this.setWidth(Vertex.VERTEX_WIDTH);
         this.setHeight(Vertex.VERTEX_HEIGHT);
 
-        this.getSign().setX(this.getX());
-        this.getSign().setY(this.getY() - this.getHeight() / 2);
-        this.getSign().setWidth(Sign.SIGN_WIDTH);
-        this.getSign().setHeight(Sign.SIGN_HEIGHT);
+        if (sign != null) {
+            this.getSign().setX(this.getX());
+            this.getSign().setY(this.getY() - this.getHeight() / 2);
+            this.getSign().setWidth(Sign.SIGN_WIDTH);
+            this.getSign().setHeight(Sign.SIGN_HEIGHT);
+        }
     }
 
     public void translate(Vector2d w) {
