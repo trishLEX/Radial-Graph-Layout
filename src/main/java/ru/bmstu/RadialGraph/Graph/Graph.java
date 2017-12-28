@@ -5,7 +5,6 @@ import ru.bmstu.RadialGraph.Algorithms.CentralityDrawingAlgorithm;
 import ru.bmstu.RadialGraph.Algorithms.ConcentricCirclesAlgorithm;
 import ru.bmstu.RadialGraph.Algorithms.ParentCenteredAlgorithm;
 import ru.bmstu.RadialGraph.Calculation.BreadthFirstSearch;
-import ru.bmstu.RadialGraph.Visualization.GraphVisualization;
 
 import java.util.ArrayDeque;
 import java.util.ArrayList;
@@ -14,9 +13,7 @@ import java.util.Scanner;
 public class Graph {
     public final static double R_OFFSET = 1.0;
 
-    private final static int MAX_SIZE = GraphVisualization.MAX_SIZE;
-
-    private int windowSize = GraphVisualization.SIZE;
+    //private int windowSize = GraphVisualization.SIZE;
 
     private ArrayList<Vertex> vertices;
     private int size;
@@ -169,6 +166,10 @@ public class Graph {
         return root;
     }
 
+    public boolean isSigns() {
+        return isSigns;
+    }
+
     private void bfs(Vertex v) {
         v.setMark(1);
 
@@ -278,119 +279,6 @@ public class Graph {
         this.center = center;
     }
 
-    private void convertCoordinates(boolean isRedraw, int type) {
-        this.calculateWidthAndHeight(isRedraw, type);
-
-        for (Vertex v: vertices) {
-            double sx = 0;
-            double sy = 0;
-
-            if (isSigns) {
-                sx = v.getSign().getX();
-                sy = v.getSign().getY();
-            }
-
-            v.setX(v.getX() / windowSize * 2);
-            v.setY(v.getY() / windowSize * 2);
-            v.setWidth(v.getWidth() / windowSize * 2);
-            v.setHeight(v.getHeight() / windowSize * 2);
-
-            if (isSigns) {
-                v.getSign().setX(sx / windowSize * 2);
-                v.getSign().setY(sy / windowSize * 2);
-                v.getSign().setWidth(v.getSign().getWidth() / windowSize * 2);
-                v.getSign().setHeight(v.getSign().getHeight() / windowSize * 2);
-            }
-        }
-
-        for (int i = 0; i < this.radials.size(); i++) {
-            double r = this.radials.get(i) / windowSize * 2;
-            this.radials.set(i, r);
-        }
-    }
-
-    private double[] findCorners() {
-        double up    = Double.NEGATIVE_INFINITY;
-        double down  = Double.POSITIVE_INFINITY;
-        double right = up;
-        double left  = down;
-
-        for (Vertex v: vertices) {
-            if (isSigns) {
-                up = Math.max(v.getY() + v.getHeight() / 2, up);
-                down = Math.min(v.getSign().getY() - v.getSign().getHeight() / 2, down);
-                right = Math.max(v.getSign().getX() + v.getSign().getWidth() / 2, right);
-                left = Math.min(v.getSign().getX() - v.getSign().getWidth() / 2, left);
-            } else {
-                up = Math.max(v.getY() + v.getHeight() / 2, up);
-                down = Math.min(v.getY() - v.getHeight() / 2, down);
-                right = Math.max(v.getX() + v.getWidth() / 2, right);
-                left = Math.min(v.getX() - v.getWidth() / 2, left);
-            }
-        }
-
-        return new double[] {up + 5, down - 5, right + 5, left - 5, right - left + 10, up - down + 10};
-    }
-
-    private void resizeCoords(double coefficient, int type) {
-        for (Vertex v : vertices) {
-            v.setVertexByCartesian(v.getX() * coefficient, v.getY() * coefficient);
-            v.setHeight(v.getHeight() * coefficient);
-            v.setWidth(v.getWidth() * coefficient);
-
-            if (isSigns) {
-                v.getSign().setHeight(v.getSign().getHeight() * coefficient);
-                v.getSign().setWidth(v.getSign().getWidth() * coefficient);
-            }
-        }
-
-        if (type == 3)
-            this.fillRadialsByParentCentered();
-        else
-            this.fillRadialsByConcentricCircle();
-    }
-
-    private void calculateWidthAndHeight(boolean isRedraw, int type) {
-        double[] corners = findCorners();
-
-        double up = corners[0];
-        double down = corners[1];
-        double right = corners[2];
-        double left = corners[3];
-        double width = corners[4];
-        double height = corners[5];
-
-        if (width > windowSize || height > windowSize) {
-            double side = width > height ? width : height;
-
-            if (!isRedraw) {
-                windowSize = (int) side + 150;
-
-                if (side > MAX_SIZE)
-                    windowSize = MAX_SIZE;
-            }
-
-            double resizeCoeff = windowSize / side;
-
-            resizeCoords(resizeCoeff, type);
-        }
-
-        corners = findCorners();
-        up = corners[0];
-        down = corners[1];
-        right = corners[2];
-        left = corners[3];
-
-        Vector2d vectorToCenter = new Vector2d(-(left + right) / 2, -(down + up) / 2);
-        translate(vectorToCenter);
-    }
-
-    private void translate(Vector2d w) {
-        for (Vertex v: vertices) {
-            v.translate(w);
-        }
-    }
-
     private Vertex findVertex(double x, double y) {
         for (Vertex v: vertices) {
             if (isSigns) {
@@ -415,7 +303,7 @@ public class Graph {
         return null;
     }
 
-    public void rebuild(double x, double y, int type) {
+    public boolean rebuild(double x, double y, int type) {
         Vertex newRoot = findVertex(x, y);
 
         if (newRoot != null) {
@@ -429,6 +317,10 @@ public class Graph {
             this.isRedraw = true;
 
             useAlgorithm(type);
+
+            return true;
+        } else {
+            return false;
         }
     }
 
@@ -458,7 +350,7 @@ public class Graph {
             ConcentricCirclesAlgorithm.useAlgorithm(this);
         } else throw new RuntimeException("Wrong number of Algorithm");
 
-        this.convertCoordinates(isRedraw, type);
+        //this.convertCoordinates(isRedraw, type);
     }
 
     private void clear() {
@@ -474,7 +366,13 @@ public class Graph {
         this.maxDepth = 0;
     }
 
-    public int getWindowSize() {
-        return this.windowSize;
+    public void translate(Vector2d w) {
+        for (Vertex v: vertices) {
+            v.translate(w);
+        }
     }
+//
+//    public int getWindowSize() {
+//        return this.windowSize;
+//    }
 }

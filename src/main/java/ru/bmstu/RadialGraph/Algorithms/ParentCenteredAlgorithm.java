@@ -5,7 +5,7 @@ import ru.bmstu.RadialGraph.Graph.*;
 import java.util.ArrayList;
 
 public final class ParentCenteredAlgorithm {
-    private static final double R = 100;
+    private static final double R = 150;
     private static final double PHI = Math.PI;
     private static final double R_OFFSET = Graph.R_OFFSET;
 

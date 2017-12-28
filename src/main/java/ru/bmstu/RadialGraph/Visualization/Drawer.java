@@ -1,5 +1,6 @@
 package ru.bmstu.RadialGraph.Visualization;
 
+import org.joml.Vector2d;
 import org.lwjgl.glfw.*;
 import ru.bmstu.RadialGraph.Graph.*;
 
@@ -14,6 +15,12 @@ import static org.lwjgl.opengl.GL11.*;
 
 class Drawer {
     private static final int NUMBER_OF_SIDES = 50;
+    private static final int MAX_SIZE = GraphVisualization.MAX_SIZE;
+
+    private static final int ALGORITHM_TYPE_1 = 1;
+    private static final int ALGORITHM_TYPE_2 = 2;
+    private static final int ALGORITHM_TYPE_3 = 3;
+    private static final int ALGORITHM_TYPE_4 = 4;
 
     private static final double[] GRAY  = {0.8, 0.8, 0.8};
     private static final double[] RED   = {1.0, 0.0, 0.0};
@@ -23,9 +30,9 @@ class Drawer {
     private static final String NAME = "Radial Graph";
 
     private long window;
+    private int windowSize = GraphVisualization.SIZE;
 
     private Graph graph;
-
     private int type;
 
     private double cursorX;
@@ -34,6 +41,7 @@ class Drawer {
     private boolean toDrawRadials = true;
     private boolean toDrawDeleted = false;
     private boolean toDrawSigns = true;
+    private boolean isRedraw = false;
 
     private void background() {
         glClearColor(1, 1, 1, 0);
@@ -44,6 +52,7 @@ class Drawer {
     Drawer(Graph graph, int type) {
         this.graph = graph;
         this.type = type;
+
         this.cursorX = 0;
         this.cursorY = 0;
 
@@ -52,7 +61,7 @@ class Drawer {
         if (!glfwInit())
             throw new IllegalStateException("Unable to initialize GLFW");
 
-        final int SIZE = this.graph.getWindowSize();
+        final int SIZE = this.getWindowSize();
 
         glfwWindowHint(GLFW_RESIZABLE, GLFW_FALSE);
 
@@ -74,20 +83,28 @@ class Drawer {
                 toDrawDeleted = !toDrawDeleted;
             }
             else if (key == GLFW_KEY_1 && action == GLFW_PRESS) {
-                this.type = 1;
-                this.graph.rebuild(1);
+                this.type = ALGORITHM_TYPE_1;
+                this.isRedraw = true;
+                this.graph.rebuild(this.type);
+                convertCoordinates(true, this.type);
             }
             else if (key == GLFW_KEY_2 && action == GLFW_PRESS) {
-                this.type = 2;
-                this.graph.rebuild(2);
+                this.type = ALGORITHM_TYPE_2;
+                this.isRedraw = true;
+                this.graph.rebuild(this.type);
+                convertCoordinates(true, this.type);
             }
             else if (key == GLFW_KEY_3 && action == GLFW_PRESS) {
-                this.type = 3;
-                this.graph.rebuild(3);
+                this.type = ALGORITHM_TYPE_3;
+                this.isRedraw = true;
+                this.graph.rebuild(this.type);
+                convertCoordinates(true, this.type);
             }
             else if (key == GLFW_KEY_4 && action == GLFW_PRESS) {
-                this.type = 4;
-                this.graph.rebuild(4);
+                this.type = ALGORITHM_TYPE_4;
+                this.isRedraw = true;
+                this.graph.rebuild(this.type);
+                convertCoordinates(true, this.type);
             }
             else if (key == GLFW_KEY_S && action == GLFW_PRESS) {
                 toDrawSigns = !toDrawSigns;
@@ -101,9 +118,124 @@ class Drawer {
 
         glfwSetMouseButtonCallback(window, GLFWMouseButtonCallback.create((window, button, action, mods) -> {
             if (button == GLFW_MOUSE_BUTTON_1 && action == GLFW_PRESS) {
-                this.graph.rebuild(cursorX, cursorY, this.type);
+                if (this.graph.rebuild(cursorX, cursorY, this.type)) {
+                    this.isRedraw = true;
+                    convertCoordinates(true, this.type);
+                }
             }
         }));
+    }
+
+    private int getWindowSize() {
+        convertCoordinates(isRedraw, type);
+        return windowSize;
+    }
+
+    private void convertCoordinates(boolean isRedraw, int type) {
+        calculateWidthAndHeight(isRedraw, type);
+
+        for (Vertex v: graph.getVertices()) {
+            double sx = 0;
+            double sy = 0;
+
+            if (graph.isSigns()) {
+                sx = v.getSign().getX();
+                sy = v.getSign().getY();
+            }
+
+            v.setX(v.getX() / windowSize * 2);
+            v.setY(v.getY() / windowSize * 2);
+            v.setWidth(v.getWidth() / windowSize * 2);
+            v.setHeight(v.getHeight() / windowSize * 2);
+
+            if (graph.isSigns()) {
+                v.getSign().setX(sx / windowSize * 2);
+                v.getSign().setY(sy / windowSize * 2);
+                v.getSign().setWidth(v.getSign().getWidth() / windowSize * 2);
+                v.getSign().setHeight(v.getSign().getHeight() / windowSize * 2);
+            }
+        }
+
+        for (int i = 0; i < graph.getRadials().size(); i++) {
+            double r = graph.getRadials().get(i) / windowSize * 2;
+            graph.getRadials().set(i, r);
+        }
+    }
+
+    private void calculateWidthAndHeight(boolean isRedraw, int type) {
+        double[] corners = findCorners();
+
+        double up = corners[0];
+        double down = corners[1];
+        double right = corners[2];
+        double left = corners[3];
+        double width = corners[4];
+        double height = corners[5];
+
+        if (width > windowSize || height > windowSize) {
+            double side = width > height ? width : height;
+
+            if (!isRedraw) {
+                windowSize = (int) side + 150;
+
+                if (side > MAX_SIZE)
+                    windowSize = MAX_SIZE;
+            }
+
+            double resizeCoeff = windowSize / side;
+
+            resizeCoords(resizeCoeff, type);
+        }
+
+        corners = findCorners();
+        up = corners[0];
+        down = corners[1];
+        right = corners[2];
+        left = corners[3];
+
+        Vector2d vectorToCenter = new Vector2d(-(left + right) / 2, -(down + up) / 2);
+        graph.translate(vectorToCenter);
+    }
+
+    private double[] findCorners() {
+        double up    = Double.NEGATIVE_INFINITY;
+        double down  = Double.POSITIVE_INFINITY;
+        double right = up;
+        double left  = down;
+
+        for (Vertex v: graph.getVertices()) {
+            if (graph.isSigns()) {
+                up = Math.max(v.getY() + v.getHeight() / 2, up);
+                down = Math.min(v.getSign().getY() - v.getSign().getHeight() / 2, down);
+                right = Math.max(v.getSign().getX() + v.getSign().getWidth() / 2, right);
+                left = Math.min(v.getSign().getX() - v.getSign().getWidth() / 2, left);
+            } else {
+                up = Math.max(v.getY() + v.getHeight() / 2, up);
+                down = Math.min(v.getY() - v.getHeight() / 2, down);
+                right = Math.max(v.getX() + v.getWidth() / 2, right);
+                left = Math.min(v.getX() - v.getWidth() / 2, left);
+            }
+        }
+
+        return new double[] {up + 5, down - 5, right + 5, left - 5, right - left + 10, up - down + 10};
+    }
+
+    private void resizeCoords(double coefficient, int type) {
+        for (Vertex v : graph.getVertices()) {
+            v.setVertexByCartesian(v.getX() * coefficient, v.getY() * coefficient);
+            v.setHeight(v.getHeight() * coefficient);
+            v.setWidth(v.getWidth() * coefficient);
+
+            if (graph.isSigns()) {
+                v.getSign().setHeight(v.getSign().getHeight() * coefficient);
+                v.getSign().setWidth(v.getSign().getWidth() * coefficient);
+            }
+        }
+
+        if (type == 3)
+            graph.fillRadialsByParentCentered();
+        else
+            graph.fillRadialsByConcentricCircle();
     }
 
     private void drawQuads(double x, double y, double width, double height) {
