@@ -15,7 +15,6 @@ public class Graph {
     public final static double R_OFFSET = 1.0;
 
     private final static int MAX_SIZE = GraphVisualization.MAX_SIZE;
-    private final static boolean SIGNS = GraphVisualization.SIGNS;
 
     private int SIZE = GraphVisualization.SIZE;
 
@@ -58,10 +57,10 @@ public class Graph {
         return this.vertices.get(i);
     }
 
-    public void scanGraph(Scanner in) {
+    public void scanGraph(Scanner in, boolean isIndexFromOne, boolean isSigns) {
         int m = in.nextInt();
 
-        if (SIGNS) {
+        if (isSigns) {
             for (int i = 0; i < size; i++) {
                 String sign = in.nextLine();
                 String[] words = sign.split(" ");
@@ -77,8 +76,8 @@ public class Graph {
         }
 
         for (int i = 0; i < m; i++) {
-            int x = in.nextInt();
-            int y = in.nextInt();
+            int x = in.nextInt() - (isIndexFromOne ? 1 : 0);
+            int y = in.nextInt() - (isIndexFromOne ? 1 : 0);
 
             vertices.get(x).getChild().add(vertices.get(y));
             vertices.get(y).getChild().add(vertices.get(x));

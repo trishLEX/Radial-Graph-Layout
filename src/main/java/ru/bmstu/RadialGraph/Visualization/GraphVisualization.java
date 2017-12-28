@@ -2,40 +2,56 @@ package ru.bmstu.RadialGraph.Visualization;
 
 import ru.bmstu.RadialGraph.Graph.*;
 
+import java.io.File;
+import java.io.FileNotFoundException;
 import java.util.Scanner;
 
 public class GraphVisualization {
-    private static int type;
-
     public final static int SIZE = 720;
     public final static int MAX_SIZE = 1000;
-    public final static boolean SIGNS = false;
 
-    private static Graph makeGraph() {
-        Scanner in = new Scanner(System.in);
+    private static Graph makeGraph(String Path, boolean isIndexFromOne, boolean isSigns) {
+        try {
+            Scanner in = new Scanner(new File(Path));
 
-        int count = in.nextInt();
+            int count = in.nextInt();
 
-        Graph graph = new Graph(count);
+            Graph graph = new Graph(count);
 
-        graph.scanGraph(in);
+            graph.scanGraph(in, isIndexFromOne, isSigns);
 
-        type = in.nextInt();
-
-        return graph;
+            return graph;
+        } catch (FileNotFoundException error) {
+            System.out.println("ERROR: File Not Found");
+            System.out.println(error.getMessage());
+            return null;
+        }
     }
 
     public static void main(String[] args) {
-        Graph graph = makeGraph();
+        boolean isIndexFromOne = false;
+        boolean isSigns = false;
+        for (int i = 2; i < args.length; i++) {
+            if (args[i].equals("-i"))
+                isIndexFromOne = true;
+            else if (args[i].equals("-s"))
+                isSigns = true;
+        }
 
-        System.out.println("Graph is scanned");
+        Graph graph = makeGraph(args[0], isIndexFromOne, isSigns);
 
-        graph.useAlgorithm(type);
+        if (graph != null) {
+            System.out.println("Graph is scanned");
 
-        System.out.println("Graph is calculated");
+            int type = Integer.parseInt(args[1]);
 
-        Drawer drawer = new Drawer(graph, type);
+            graph.useAlgorithm(type);
 
-        drawer.startLoop();
+            System.out.println("Graph is calculated");
+
+            Drawer drawer = new Drawer(graph, type);
+
+            drawer.startLoop();
+        }
     }
 }
