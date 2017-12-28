@@ -8,13 +8,6 @@ public class Sign {
     private double width;
     private double height;
 
-    Sign(double x, double y, double width, double height) {
-        this.x = x;
-        this.y = y;
-        this.width = width;
-        this.height = height;
-    }
-
     Sign(double x, double y) {
         this.width = SIGN_WIDTH;
         this.height = SIGN_HEIGHT;

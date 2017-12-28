@@ -90,7 +90,6 @@ public final class ParentCenteredAlgorithm {
     private static void deleteIntersections(Graph tree) {
         for (ArrayList<Vertex> currentDepth: tree.getVerticesByDepth()) {
             for (Vertex v : currentDepth) {
-                System.out.println("v = " + v.getIndex());
                 makeRadialOffsetWithoutIntersections(v, v.getChild());
 
                 for (Vertex u : v.getChild()) {
@@ -102,8 +101,6 @@ public final class ParentCenteredAlgorithm {
             }
         }
 
-        System.out.println("Relatives intersections are deleted");
-
         for (Vertex v: tree.getVertices()){
             for (Vertex u: tree.getVertices()) {
                 if (v != u && v.isIntersect(u)) {
@@ -111,7 +108,6 @@ public final class ParentCenteredAlgorithm {
                 }
             }
         }
-        System.out.println("Random intersections are deleted");
     }
 
     private static void makeRadialOffsetWithoutIntersections(Vertex v, Vertex u) {
@@ -187,23 +183,13 @@ public final class ParentCenteredAlgorithm {
     public static void useAlgorithm(Graph tree) {
         Vertex root = tree.getRoot();
 
-        System.out.println("Root is found: " + root);
-
-        System.out.println("Max depth is found: " + tree.getMaxDepth());
-
         radialPositions(tree, root);
-
-        System.out.println("Radial positions are found");
 
         for (ArrayList<Vertex> currentDepth: tree.getVerticesByDepth())
             for (Vertex v: currentDepth)
                 v.castToCartesianCoordinates();
 
-        System.out.println("Coordinates are casted to cartesian");
-
         deleteIntersections(tree);
-
-        System.out.println("Intersections are deleted");
 
         tree.fillRadialsByParentCentered();
     }

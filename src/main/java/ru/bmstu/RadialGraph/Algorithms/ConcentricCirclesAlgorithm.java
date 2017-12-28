@@ -113,19 +113,11 @@ public final class ConcentricCirclesAlgorithm {
     public static void useAlgorithm(Graph tree) {
         Vertex root = tree.getRoot();
 
-        System.out.println("Root is found: " + root);
-
-        System.out.println("Max depth is found: " + tree.getMaxDepth());
-
         addFirstRadii(tree);
 
         radialPositions(tree, root, 0, 2 * Math.PI);
 
-        System.out.println("Positions are calculated");
-
         deleteIntersections(tree);
-
-        System.out.println("Intersections are deleted");
 
         tree.fillRadialsByConcentricCircle();
     }

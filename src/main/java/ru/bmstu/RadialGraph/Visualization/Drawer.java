@@ -50,11 +50,9 @@ class Drawer {
         GLFWErrorCallback.createPrint(System.err).set();
 
         if (!glfwInit())
-            throw new IllegalStateException("unable to initialize GLFW");
+            throw new IllegalStateException("Unable to initialize GLFW");
 
         final int SIZE = this.graph.getWindowSize();
-
-        System.out.println("WINDOW size = " + SIZE);
 
         glfwWindowHint(GLFW_RESIZABLE, GLFW_FALSE);
 
@@ -103,7 +101,6 @@ class Drawer {
 
         glfwSetMouseButtonCallback(window, GLFWMouseButtonCallback.create((window, button, action, mods) -> {
             if (button == GLFW_MOUSE_BUTTON_1 && action == GLFW_PRESS) {
-                System.out.println("x = " + cursorX / 2 * SIZE + " y = " + cursorY / 2 * SIZE);
                 this.graph.rebuild(cursorX, cursorY, this.type);
             }
         }));

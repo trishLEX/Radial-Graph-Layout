@@ -22,8 +22,8 @@ public class GraphVisualization {
 
             return graph;
         } catch (FileNotFoundException error) {
-            System.out.println("ERROR: File Not Found");
-            System.out.println(error.getMessage());
+            System.err.println("ERROR: File Not Found");
+            System.err.println(error.getMessage());
             return null;
         }
     }
@@ -41,13 +41,10 @@ public class GraphVisualization {
         Graph graph = makeGraph(args[0], isIndexFromOne, isSigns);
 
         if (graph != null) {
-            System.out.println("Graph is scanned");
 
             int type = Integer.parseInt(args[1]);
 
             graph.useAlgorithm(type);
-
-            System.out.println("Graph is calculated");
 
             Drawer drawer = new Drawer(graph, type);
 

@@ -227,8 +227,6 @@ public class Graph {
             vertex.setChild(temp);
         }
 
-        System.out.println(this);
-
         calculateMaxDepth(this.root);
 
         checkForConnections();
@@ -272,8 +270,6 @@ public class Graph {
 
         graphRadii();
 
-        System.out.println("radii = " + radii);
-
         for (Vertex v: vertices) {
             if (eccentricity(v) == radii)
                 center.add(v);
@@ -284,8 +280,6 @@ public class Graph {
 
     private void convertCoordinates(boolean isRedraw, int type) {
         this.calculateWidthAndHeight(isRedraw, type);
-
-        System.out.println("final Graph:\n" + this);
 
         for (Vertex v: vertices) {
             double sx = 0;
@@ -307,11 +301,6 @@ public class Graph {
                 v.getSign().setWidth(v.getSign().getWidth() / windowSize * 2);
                 v.getSign().setHeight(v.getSign().getHeight() / windowSize * 2);
             }
-
-            System.out.println("CONVERTED COORDINATES " + v.getIndex() + " (" + v.getX() + "," + v.getY() + ") w = " + v.getWidth() + " h = " + v.getHeight());
-
-            if (isSigns)
-                System.out.println("            " + "sign: (" + v.getSign().getX() + "," + v.getSign().getY() + ") w = " + v.getSign().getWidth() + " h = " + v.getSign().getHeight());
         }
 
         for (int i = 0; i < this.radials.size(); i++) {
@@ -371,8 +360,6 @@ public class Graph {
         double width = corners[4];
         double height = corners[5];
 
-        System.out.println("width = " + width + " height = " + height + " right = " + right + " left = " + left + " up = " + up + " down = " + down);
-
         if (width > windowSize || height > windowSize) {
             double side = width > height ? width : height;
 
@@ -393,21 +380,9 @@ public class Graph {
         down = corners[1];
         right = corners[2];
         left = corners[3];
-        width = corners[4];
-        height = corners[5];
-        System.out.println("width = " + width + " height = " + height + " right = " + right + " left = " + left + " up = " + up + " down = " + down);
 
         Vector2d vectorToCenter = new Vector2d(-(left + right) / 2, -(down + up) / 2);
         translate(vectorToCenter);
-
-        corners = findCorners();
-        up = corners[0];
-        down = corners[1];
-        right = corners[2];
-        left = corners[3];
-        width = corners[4];
-        height = corners[5];
-        System.out.println("width = " + width + " height = " + height + " right = " + right + " left = " + left + " up = " + up + " down = " + down);
     }
 
     private void translate(Vector2d w) {
@@ -441,11 +416,7 @@ public class Graph {
     }
 
     public void rebuild(double x, double y, int type) {
-        System.out.println("x = " + x + " y = " + y);
-
         Vertex newRoot = findVertex(x, y);
-
-        System.out.println("new root is " + newRoot);
 
         if (newRoot != null) {
             this.root = newRoot;
@@ -474,9 +445,6 @@ public class Graph {
 
     public void useAlgorithm(int type) {
         this.makeTree(this.root);
-        System.out.println(this);
-        System.out.println("Tree is built");
-        System.out.println("TYPE = " + type);
 
         if (type == 1) {
             ParentCenteredAlgorithm.useAlgorithm(this);
@@ -489,18 +457,6 @@ public class Graph {
         } else if (type == 4) {
             ConcentricCirclesAlgorithm.useAlgorithm(this);
         } else throw new RuntimeException("Wrong number of Algorithm");
-
-
-        System.out.println(this);
-
-        System.out.println("RADIALS " + this.radials);
-
-        for (Vertex v : this.getVertices()) {
-            System.out.println("COORDINATES " + v.getIndex() + " (" + v.getX() + "," + v.getY() + ") w = " + v.getWidth() + " h = " + v.getHeight());
-
-            if (isSigns)
-                System.out.println("            " + "sign: (" + v.getSign().getX() + "," + v.getSign().getY() + ") w = " + v.getSign().getWidth() + " h = " + v.getSign().getHeight());
-        }
 
         this.convertCoordinates(isRedraw, type);
     }

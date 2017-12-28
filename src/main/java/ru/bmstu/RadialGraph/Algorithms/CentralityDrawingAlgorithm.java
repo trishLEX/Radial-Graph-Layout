@@ -88,14 +88,9 @@ public final class CentralityDrawingAlgorithm {
     }
 
     public static void useAlgorithm(Graph graph) {
-        System.out.println("Graph is:");
-        System.out.println(graph);
-
         ArrayList<double[]> coords = memorizeCoords(graph);
 
         focusingOnNode(graph, coords);
-
-        System.out.println("Centrality drawing is calculated");
 
         graph.fillRadialsByConcentricCircle();
     }
