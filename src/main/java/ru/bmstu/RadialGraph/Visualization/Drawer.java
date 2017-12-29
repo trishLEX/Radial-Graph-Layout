@@ -163,7 +163,7 @@ class Drawer {
     }
 
     private void calculateWidthAndHeight(boolean isRedraw, int type) {
-        double[] corners = findCorners();
+        double[] corners = graph.findCorners();
 
         double up = corners[0];
         double down = corners[1];
@@ -187,7 +187,7 @@ class Drawer {
             resizeCoords(resizeCoeff, type);
         }
 
-        corners = findCorners();
+        corners = graph.findCorners();
         up = corners[0];
         down = corners[1];
         right = corners[2];
@@ -195,29 +195,6 @@ class Drawer {
 
         Vector2d vectorToCenter = new Vector2d(-(left + right) / 2, -(down + up) / 2);
         graph.translate(vectorToCenter);
-    }
-
-    private double[] findCorners() {
-        double up    = Double.NEGATIVE_INFINITY;
-        double down  = Double.POSITIVE_INFINITY;
-        double right = up;
-        double left  = down;
-
-        for (Vertex v: graph.getVertices()) {
-            if (graph.isSigns()) {
-                up = Math.max(v.getY() + v.getHeight() / 2, up);
-                down = Math.min(v.getSign().getY() - v.getSign().getHeight() / 2, down);
-                right = Math.max(v.getSign().getX() + v.getSign().getWidth() / 2, right);
-                left = Math.min(v.getSign().getX() - v.getSign().getWidth() / 2, left);
-            } else {
-                up = Math.max(v.getY() + v.getHeight() / 2, up);
-                down = Math.min(v.getY() - v.getHeight() / 2, down);
-                right = Math.max(v.getX() + v.getWidth() / 2, right);
-                left = Math.min(v.getX() - v.getWidth() / 2, left);
-            }
-        }
-
-        return new double[] {up + 5, down - 5, right + 5, left - 5, right - left + 10, up - down + 10};
     }
 
     private void resizeCoords(double coefficient, int type) {
