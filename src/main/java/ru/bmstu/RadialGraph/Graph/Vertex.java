@@ -9,6 +9,7 @@ public class Vertex {
     public static final double VERTEX_WIDTH = 10.0;
     public static final double VERTEX_HEIGHT = 10.0;
     public static final int SIZE_OF_LETTER = 11;
+    private static final double[] RED   = {1.0, 0.0, 0.0};
 
     private ArrayList<Vertex> child;
     private Vertex parent;
@@ -21,6 +22,7 @@ public class Vertex {
     private double angle;
     private double width, height;
     private Sign sign;
+    private double[] color;
 
     Vertex(int i, boolean isSigns) {
         this.child = new ArrayList<>();
@@ -37,6 +39,8 @@ public class Vertex {
 
         this.width = VERTEX_WIDTH;
         this.height = VERTEX_HEIGHT;
+
+        this.color = RED;
 
         if (isSigns)
             this.sign = new Sign(x, y - height / 2);
@@ -323,5 +327,13 @@ public class Vertex {
     public void translate(Vector2d w) {
         this.setX(x + w.x);
         this.setY(y + w.y);
+    }
+
+    public double[] getColor() {
+        return color;
+    }
+
+    public void setColor(double[] color) {
+        this.color = color;
     }
 }

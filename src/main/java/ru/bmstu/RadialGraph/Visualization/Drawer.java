@@ -23,7 +23,6 @@ class Drawer {
     private static final int ALGORITHM_TYPE_4 = 4;
 
     private static final double[] GRAY  = {0.8, 0.8, 0.8};
-    private static final double[] RED   = {1.0, 0.0, 0.0};
     private static final double[] BLACK = {0.0, 0.0, 0.0};
     private static final double[] WHITE = {1.0, 1.0, 1.0};
 
@@ -239,7 +238,7 @@ class Drawer {
 
         glBegin(GL_QUADS);
         {
-            glColor3dv(RED);
+            glColor3dv(v.getColor());
             drawQuads(x, y, width, height);
         }
         glEnd();
