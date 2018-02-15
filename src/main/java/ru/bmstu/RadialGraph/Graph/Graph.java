@@ -1,8 +1,6 @@
 package ru.bmstu.RadialGraph.Graph;
 
 import org.joml.Vector2d;
-import org.lwjgl.system.CallbackI;
-import org.omg.CORBA.MARSHAL;
 import ru.bmstu.RadialGraph.Algorithms.CentralityDrawingAlgorithm;
 import ru.bmstu.RadialGraph.Algorithms.ConcentricCirclesAlgorithm;
 import ru.bmstu.RadialGraph.Algorithms.ParentCenteredAlgorithm;
@@ -320,6 +318,8 @@ public class Graph {
 
             useAlgorithm(type);
 
+            System.out.println(this.root + "\n" + this);
+
             return true;
         } else {
             return false;
@@ -327,14 +327,14 @@ public class Graph {
     }
 
     public void rebuild(int type) {
-            for (Vertex v : vertices) {
-                v.clear();
-            }
+        for (Vertex v : vertices) {
+            v.clear();
+        }
 
-            this.clear();
-            this.isRedraw = true;
+        this.clear();
+        this.isRedraw = true;
 
-            useAlgorithm(type);
+        useAlgorithm(type);
     }
 
     public void useAlgorithm(int type) {
@@ -352,186 +352,10 @@ public class Graph {
             ConcentricCirclesAlgorithm.useAlgorithm(this);
         } else throw new RuntimeException("Wrong number of Algorithm");
 
-        int count = 0;
-        double max = 0;
-        double min = Double.POSITIVE_INFINITY;
-
-        for (Vertex v: vertices) {
-            for (Vertex u: v.getChild()) {
-                for (Vertex a: vertices) {
-                    for (Vertex b: a.getChild()) {
-                        if (v != a && v != b && u != a && u != b) {
-                            if (checkIntersectionOfTwoLineSegments(v, u, a, b))
-                                count++;
-                            max = Math.max(max, v.distTo(u));
-                            max = Math.max(max, a.distTo(b));
-                            min = Math.min(min, a.distTo(b));
-                            min = Math.min(min, v.distTo(u));
-                        }
-                    }
-                }
-            }
-        }
-
-        System.out.println(count);
-        System.out.println(min);
-        System.out.println(max);
         double[] corners = findCorners();
         double width = corners[4];
         double height = corners[5];
         System.out.println(width + " " + height);
-    }
-
-    private boolean checkIntersectionOfTwoLineSegments(Vertex p1, Vertex p2, Vertex p3, Vertex p4) {
-
-//сначала расставим точки по порядку, т.е. чтобы было p1.x <= p2.x
-
-        if (p2.getX() < p1.getX()) {
-
-            Vertex tmp = p1;
-
-            p1 = p2;
-
-            p2 = tmp;
-
-        }
-
-//и p3.x <= p4.x
-
-        if (p4.getX() < p3.getX()) {
-
-            Vertex tmp = p3;
-
-            p3 = p4;
-
-            p4 = tmp;
-
-        }
-
-//проверим существование потенциального интервала для точки пересечения отрезков
-
-        if (p2.getX() < p3.getX()) {
-
-            return false; //ибо у отрезков нету взаимной абсциссы
-
-        }
-
-//если оба отрезка вертикальные
-
-        if((p1.getX() - p2.getX() == 0) && (p3.getX() - p4.getX() == 0)) {
-
-//если они лежат на одном X
-
-            if(p1.getX() == p3.getX()) {
-
-//проверим пересекаются ли они, т.е. есть ли у них общий Y
-
-//для этого возьмём отрицание от случая, когда они НЕ пересекаются
-
-                if (!((Math.max(p1.getY(), p2.getY()) < Math.min(p3.getY(), p4.getY())) ||
-
-                        (Math.min(p1.getY(), p2.getY()) > Math.max(p3.getY(), p4.getY())))) {
-
-                    return true;
-
-                }
-
-            }
-
-            return false;
-
-        }
-
-//найдём коэффициенты уравнений, содержащих отрезки
-
-//f1(x) = A1*x + b1 = y
-
-//f2(x) = A2*x + b2 = y
-
-//если первый отрезок вертикальный
-
-        if (p1.getX() - p2.getX() == 0) {
-
-//найдём Xa, Ya - точки пересечения двух прямых
-
-            double Xa = p1.getX();
-
-            double A2 = (p3.getY() - p4.getY()) / (p3.getX() - p4.getX());
-
-            double b2 = p3.getY() - A2 * p3.getX();
-
-            double Ya = A2 * Xa + b2;
-
-            if (p3.getX() <= Xa && p4.getX() >= Xa && Math.min(p1.getY(), p2.getY()) <= Ya &&
-
-                    Math.max(p1.getY(), p2.getY()) >= Ya) {
-
-                return true;
-
-            }
-
-            return false;
-
-        }
-
-//если второй отрезок вертикальный
-
-        if (p3.getX() - p4.getX() == 0) {
-
-//найдём Xa, Ya - точки пересечения двух прямых
-
-            double Xa = p3.getX();
-
-            double A1 = (p1.getY() - p2.getY()) / (p1.getX() - p2.getX());
-
-            double b1 = p1.getY() - A1 * p1.getX();
-
-            double Ya = A1 * Xa + b1;
-
-            if (p1.getX() <= Xa && p2.getX() >= Xa && Math.min(p3.getY(), p4.getY()) <= Ya &&
-
-                    Math.max(p3.getY(), p4.getY()) >= Ya) {
-
-                return true;
-
-            }
-
-            return false;
-
-        }
-
-//оба отрезка невертикальные
-
-        double A1 = (p1.getY() - p2.getY()) / (p1.getX() - p2.getX());
-
-        double A2 = (p3.getY() - p4.getY()) / (p3.getX() - p4.getX());
-
-        double b1 = p1.getY() - A1 * p1.getX();
-
-        double b2 = p3.getY() - A2 * p3.getX();
-
-        if (A1 == A2) {
-
-            return false; //отрезки параллельны
-
-        }
-
-//Xa - абсцисса точки пересечения двух прямых
-
-        double Xa = (b2 - b1) / (A1 - A2);
-
-        if ((Xa < Math.max(p1.getX(), p3.getX())) || (Xa > Math.min( p2.getX(), p4.getX()))) {
-
-            return false; //точка Xa находится вне пересечения проекций отрезков на ось X
-
-        }
-
-        else {
-
-            return true;
-
-        }
-
     }
 
     private void clear() {
